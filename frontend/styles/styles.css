@@ -1,0 +1,14 @@
+.custom-input {
+  @apply py-3 pl-3 border-solid border-gray-200 rounded-md   placeholder:font-light focus:border-solid focus:border-primary-opacity-80;
+}
+.search-input {
+  @apply w-full py-2.5 pl-3 pr-1 border-solid border-[1px] border-gray-200 rounded-md placeholder:font-light max-h-10;
+}
+.search-input:focus {
+  @apply outline-none; /* Remove default focus outline */
+  box-shadow: 0 0 0 2px rgba(255, 103, 31, 0.4); /* Example focused color */
+}
+.custom-textarea {
+  border-color: rgb(229, 231, 235);
+  border-width: "2px";
+}
