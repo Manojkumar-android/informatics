@@ -98,6 +98,7 @@ module.exports = {
       header: "24px",
     },
   },
+
   corePlugins: {
     preflight: false,
   },

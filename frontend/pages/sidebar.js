@@ -29,7 +29,7 @@ const Navigation = () => {
     const menuItems = [
 
         { href: "/dashboard", text: "Dashboard", activeIcon: "/assets/icons/sidebar/dashboard-active.svg", inActiveIcon: "/assets/icons/sidebar/dashboard-inactive.svg", children: [] },
-        { href: "/institutes/institutes", text: "Institutes", activeIcon: "/assets/icons/sidebar/instituets-active.svg", inActiveIcon: "/assets/icons/sidebar/instituets-inactive.svg", children: [] },
+        { href: "/university/university", text: "University", activeIcon: "/assets/icons/sidebar/instituets-active.svg", inActiveIcon: "/assets/icons/sidebar/instituets-inactive.svg", children: [] },
         { href: "/events", text: "Resources", activeIcon: "/assets/icons/sidebar/resources-active.svg", inActiveIcon: "/assets/icons/sidebar/resources-inactive.svg", children: [] },
         { href: "/colleges", text: "Assign Resources", activeIcon: "/assets/icons/sidebar/assignResources-active.svg", inActiveIcon: "/assets/icons/sidebar/assignResources-inactive.svg", children: [] },
         { href: "/corporates", text: "FAQ’s", activeIcon: "/assets/icons/sidebar/faq-active.svg", inActiveIcon: "/assets/icons/sidebar/faq-inactive.svg", children: [] },
@@ -46,18 +46,18 @@ const Navigation = () => {
     ];
 
     return (
-        <div className="flex flex-col h-screen bg-white shadow-md">
+        <div className="flex flex-col h-screen  bg-white  shadow-md">
             {!collapsed ? (
                 <div className="flex text-center items-center justify-center bg-primary h-[50px] my-3 mx-5" >
                     <img src="/assets/icons/logo.png" height="30x" width="70%" alt="" />
                 </div>
             ) : (
                 <div className="flex justify-center my-3">
-                    <img src="/assets/icons/newlogo.png" alt="" height="50px" width="50%" />
+                    <img src="/assets/icons/short_logo.png" alt="" height="50px" width="50%" />
                 </div>
             )}
-            <div className="flex-grow overflow-y-auto">
-                <Sidebar width="220px" collapsed={collapsed} className="pl-3 mt-3" >
+            <div className="flex h-screen ">
+                <Sidebar width="250px" collapsed={collapsed} className="pl-3 mt-3 " >
                     <Menu menuItemStyles={{
                         button: ({ level, active }) => {
                             // Apply styles only on first level elements of the tree

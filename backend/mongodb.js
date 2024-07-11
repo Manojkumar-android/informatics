@@ -2,12 +2,7 @@
 const mongoose = require('mongoose');
 
 require('dotenv').config();
-require('./model/settings/location/country');
-require('./model/settings/location/state');
-require('./model/settings/location/city');
-require('./model/settings/location/pincode');
-require('./model/settings/specification');
-require('./model/settings/college');
+require('./model/admin/adminModel');
 
 
 
