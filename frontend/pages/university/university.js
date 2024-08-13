@@ -3,8 +3,10 @@ import MainScreen from "../mainScreen";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { getUniversities } from '../../actions/admin/universitiesAction';
+import { isAuth } from '../../actions/admin/adminAction';
 import { ToastContainer, toast } from 'react-toastify';
 import Paginator from "./paginator";
+import Router from 'next/router';
 
 const Institutes = () => {
     const [institutes, setInstitutes] = useState({
@@ -22,7 +24,12 @@ const Institutes = () => {
     })
     const { pagingCounter, totalDocs, limit, totalPages, page, hasPrevPage, hasNextPage, prevPage, nextPage, docs, to } = institutes;
     useEffect(() => {
-        loadData()
+        if (isAuth) {
+            loadData()
+        } else {
+            Router.push(`/`);
+        }
+
     }, [page]);
     const loadData = () => {
         getUniversities(page)
@@ -40,8 +47,8 @@ const Institutes = () => {
     const handleInstituteResponse = (response) => {
         if (response.success) {
             const { limit, docs, totalDocs, page, hasPrevPage, hasNextPage, prevPage, nextPage, pagingCounter } = response.data;
-            console.table(pagingCounter);
-            console.table(limit);
+            // console.table(pagingCounter);
+            // console.table(limit);
 
             setInstitutes(prevState => ({
                 ...prevState,
@@ -89,7 +96,7 @@ const Institutes = () => {
             <MainScreen page="Universities" children={
                 <>
                     <div className="flex  justify-between items-center p-6">
-                        <div className="text-header font-semibold">Universities</div>
+                        <div className="text-subheader text-primary  cursor-pointer">Universities</div>
                         <Paginator
                             page={page}
                             hasNextPage={hasNextPage}

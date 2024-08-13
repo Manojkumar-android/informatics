@@ -1,0 +1,104 @@
+.custom-input {
+  @apply py-3 pl-3 border-solid border-gray-200 rounded-md   placeholder:font-light focus:border-solid focus:border-primary-opacity-80;
+}
+.search-input {
+  @apply w-full py-2.5 pl-3 pr-1 border-solid border-[1px] border-gray-200 rounded-md placeholder:font-light max-h-10;
+}
+.search-input:focus {
+  @apply outline-none; /* Remove default focus outline */
+  box-shadow: 0 0 0 2px rgba(255, 103, 31, 0.4); /* Example focused color */
+}
+.custom-textarea {
+  border-color: rgb(229, 231, 235);
+  border-width: "2px";
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dropdown-menu {
+  -webkit-box-shadow: 0 0.2rem 2rem rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0.2rem 2rem rgba(0, 0, 0, 0.12);
+  -webkit-animation-name: DropDownSlide;
+  animation-name: DropDownSlide;
+  -webkit-animation-duration: 0.3s;
+  animation-duration: 0.3s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  margin: 0;
+  position: absolute;
+  z-index: 1000;
+}
+.dropdown-menu.show {
+  top: 100% !important;
+}
+.dropdown-menu[style] {
+  left: -200% !important;
+  right: 0;
+}
+
+.dropdown-menu-end[style] {
+  left: 0 !important;
+  right: auto !important;
+}
+
+.dropdown-menu[data-popper-placement^="left"],
+.dropdown-menu[data-popper-placement^="top"],
+.dropdown-menu[data-popper-placement^="right"] {
+  top: auto !important;
+  -webkit-animation: none !important;
+  animation: none !important;
+}
+
+@-webkit-keyframes DropDownSlide {
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  0% {
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+}
+
+@keyframes DropDownSlide {
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  0% {
+    -webkit-transform: translateY(10px);
+    transform: translateY(10px);
+  }
+}
+
+@media (min-width: 600px) {
+  .dropdown-menu-lg {
+    width: 320px;
+  }
+}
+
+.dropdown-divider {
+  border-top-color: #eff2f7;
+}
+
+.dropdown-mega {
+  position: static !important;
+}
+
+.dropdown-megamenu[style] {
+  padding: 20px;
+  right: 20px !important;
+  left: 20px !important;
+}
+
+.dropdown-mega-menu-xl {
+  width: 40rem;
+}
+
+.dropdown-mega-menu-lg {
+  width: 26rem;
+}

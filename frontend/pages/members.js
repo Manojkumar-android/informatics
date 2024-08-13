@@ -7,7 +7,7 @@ const Members = () => {
 
             <MainScreen children={
                 <div className="p-6">
-                    <div className=" text-header font-semibold">Members</div>
+                    <div className=" text-subheader font-semibold">Members</div>
                 </div>
             } />
 

@@ -46,7 +46,7 @@ const Location = () => {
             <MainScreen children={
 
                 <div className="p-6 space-y-10 ">
-                    <div className="text-header font-semibold">Location</div>
+                    <div className="text-subheader font-semibold">Location</div>
 
                     <div className="flex space-x-10  text-white">
                         <div className={type == 0 ? active : inactive} onClick={() => setType(0)}>

@@ -1,6 +1,5 @@
 import fetch from 'isomorphic-fetch';
 import Cookies from 'universal-cookie';
-import Router from 'next/router';
 
 const cookies = new Cookies();
 
@@ -34,6 +33,17 @@ export const authenticate = (data, next) => {
 
     next();
 };
+export const isAuth = () => {
+
+    if (localStorage.getItem('token')) {
+        return JSON.parse(localStorage.getItem('token'));
+    } else {
+        return false;
+    }
+
+
+};
+
 // set cookie
 export const setCookie = (key, value) => {
     if (typeof window !== 'undefined') {

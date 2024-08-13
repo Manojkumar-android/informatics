@@ -152,7 +152,7 @@ const Specification = () => {
             <MainScreen children={
 
                 <div className="p-6 space-y-10 ">
-                    <div className="text-header font-semibold">Specifications</div>
+                    <div className="text-subheader font-semibold">Specifications</div>
 
 
 

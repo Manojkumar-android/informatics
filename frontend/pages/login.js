@@ -48,8 +48,8 @@ const Login = () => {
                 <form role="form" onSubmit={onSubmit}  >
 
                     <div className="bg-white shadow-2xl rounded-2xl w-[500px] md:w-[450px]   p-12 md:px-16 ">
-                        <div className="flex text-center items-center justify-center bg-primary h-[50px] mx-5" >
-                            <img src="/assets/icons/logo.png" height="35x" width="70%" alt="" />
+                        <div className="flex text-center items-center justify-center h-[50px] mx-5" >
+                            <img src="/assets/icons/logo.png" height="50x" width="250px" alt="" />
                         </div>
                         <div className="flex items-start justify-start my-5 text-[24px] font-bold">
                             Admin Login

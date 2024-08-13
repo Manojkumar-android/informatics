@@ -151,7 +151,7 @@ const College = () => {
             <MainScreen children={
 
                 <div className="p-6 space-y-10 ">
-                    <div className="text-header font-semibold">Colleges</div>
+                    <div className="text-subheader font-semibold">Colleges</div>
 
 
 

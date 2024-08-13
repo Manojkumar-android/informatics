@@ -13,6 +13,9 @@ module.exports = {
       backgroundColor: {
         'dim': 'rgba(0, 0, 0, 0.5)', // Define a custom color for the dim effect
       },
+      colors: {
+        checkboxChecked: '#000000', // Customize with your desired color
+      },
       // Define custom label styles
       typography: {
         label: {

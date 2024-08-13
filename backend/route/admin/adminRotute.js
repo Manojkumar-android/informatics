@@ -6,5 +6,8 @@ const jwt = require('../../middleware/authMiddleware');
 router.post('/signup', admin.createAdmin);
 router.post('/login', admin.login);
 
-//mobile app
+//University add 
+router.post('/addUniversity', admin.addUniversity);
+
+
 module.exports = router;

@@ -30,17 +30,9 @@ const Navigation = () => {
 
         { href: "/dashboard", text: "Dashboard", activeIcon: "/assets/icons/sidebar/dashboard-active.svg", inActiveIcon: "/assets/icons/sidebar/dashboard-inactive.svg", children: [] },
         { href: "/university/university", text: "University", activeIcon: "/assets/icons/sidebar/instituets-active.svg", inActiveIcon: "/assets/icons/sidebar/instituets-inactive.svg", children: [] },
-        { href: "/events", text: "Resources", activeIcon: "/assets/icons/sidebar/resources-active.svg", inActiveIcon: "/assets/icons/sidebar/resources-inactive.svg", children: [] },
-        { href: "/colleges", text: "Assign Resources", activeIcon: "/assets/icons/sidebar/assignResources-active.svg", inActiveIcon: "/assets/icons/sidebar/assignResources-inactive.svg", children: [] },
-        { href: "/corporates", text: "FAQ’s", activeIcon: "/assets/icons/sidebar/faq-active.svg", inActiveIcon: "/assets/icons/sidebar/faq-inactive.svg", children: [] },
+        { href: "/resources", text: "Resources", activeIcon: "/assets/icons/sidebar/resources-active.svg", inActiveIcon: "/assets/icons/sidebar/resources-inactive.svg", children: [] },
+        { href: "/resources/assign", text: "Assign Resources", activeIcon: "/assets/icons/sidebar/assignResources-active.svg", inActiveIcon: "/assets/icons/sidebar/assignResources-inactive.svg", children: [] },
 
-        {
-            href: "/settings", text: "Settings", activeIcon: "/assets/icons/sidebar/settings-active.svg", inActiveIcon: "/assets/icons/sidebar/settings-inactive.svg",
-            children: [
-
-
-            ]
-        },
 
         // Add more menu items as needed
     ];
@@ -48,8 +40,8 @@ const Navigation = () => {
     return (
         <div className="flex flex-col h-screen  bg-white  shadow-md">
             {!collapsed ? (
-                <div className="flex text-center items-center justify-center bg-primary h-[50px] my-3 mx-5" >
-                    <img src="/assets/icons/logo.png" height="30x" width="70%" alt="" />
+                <div className="flex text-center items-center justify-center  h-[50px] my-3 mx-5" >
+                    <img src="/assets/icons/logo.png" height="40x" width="200px" alt="" />
                 </div>
             ) : (
                 <div className="flex justify-center my-3">
