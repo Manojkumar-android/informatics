@@ -13,31 +13,41 @@ import { AuthorContextProvider } from '../contexts/search/authorContext';
 import { DatabaseContextProvider } from '../contexts/search/databaseContext';
 import NextNProgress from "nextjs-progressbar";
 import { SubjectContextProvider } from '../contexts/search/subjectContext';
+import { PublisherContextProvider } from '../contexts/search/publisherContext';
+import { ItemTypeContextProvider } from '../contexts/search/itemTypeContext';
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ToastProvider>
-      <DatabaseContextProvider>
+    <DatabaseContextProvider>
+      <ToastProvider>
         <PaginationContextProvider>
-          <AuthorContextProvider>
-            <SubjectContextProvider>
-              <SearchContextProvider>
-                <BrowseContextProvider>
-                  <UserContextProvider>
+          <ItemTypeContextProvider>
+            <PublisherContextProvider>
+              <AuthorContextProvider>
+                <SubjectContextProvider>
 
-                    <div className="font-roboto">
-                      <NextNProgress color='rgba(245, 130, 32, 1)' />
-                      <Component {...pageProps} />
-                    </div>
+                  <SearchContextProvider>
+                    <BrowseContextProvider>
+                      <UserContextProvider>
 
-                  </UserContextProvider>
-                </BrowseContextProvider>
-              </SearchContextProvider>
-            </SubjectContextProvider>
-          </AuthorContextProvider>
+
+                        <div className="font-roboto">
+                          <NextNProgress color='rgba(245, 130, 32, 1)' />
+                          <Component {...pageProps} />
+                        </div>
+
+
+                      </UserContextProvider>
+                    </BrowseContextProvider>
+                  </SearchContextProvider>
+
+                </SubjectContextProvider>
+              </AuthorContextProvider>
+            </PublisherContextProvider>
+          </ItemTypeContextProvider>
         </PaginationContextProvider>
-      </DatabaseContextProvider>
-    </ToastProvider>
+      </ToastProvider>
+    </DatabaseContextProvider>
   );
 }
 

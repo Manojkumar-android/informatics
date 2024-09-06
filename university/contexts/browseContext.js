@@ -15,18 +15,22 @@ export const BrowseContextProvider = ({ children }) => {
         number: 1, size: 0, totalPages: 0, totalElements: 0, pageCounter: 0
 
     })
-    const { database, setDatabase } = useContext(DatabaseContext);
+    const { database, setDatabase, resources, logos } = useContext(DatabaseContext);
+    const [loading, setLoading] = useState(false);
 
     const { number, size, totalPages, totalElements, pageCounter } = pageDetails;
     const [data, setData] = useState([]);
 
     useEffect(() => {
+        if (resources.length == 0) return;
         browse()
-    }, [number, selectedLetter]);
+    }, [number, selectedLetter, resources]);
 
     const browse = () => {
+        setLoading(true);
+
         const db = getCheckedValues(database)
-        const body = { startsWith: selectedLetter, page: number, database: db, }
+        const body = { startsWith: selectedLetter, page: number, database: db, logos }
         dSpaceBrowse(body).then(res => {
 
             if (res.error) {
@@ -35,10 +39,14 @@ export const BrowseContextProvider = ({ children }) => {
             } else {
                 console.log(JSON.stringify(res.data))
                 //  alert(JSON.stringify(res.data))
+                setLoading(false);
+
                 handleSearchResponse(res)
                 //    handleAuthorResponse(res.authorData)
                 //  handleSubjectResponse(res.subjectData)
                 setData(res.data)
+                setLoading(false);
+
             }
         })
     }
@@ -73,7 +81,7 @@ export const BrowseContextProvider = ({ children }) => {
             value={{
                 selectedLetter,
                 setSelectedLetter,
-                pageDetails, setPageDetails, data,
+                pageDetails, setPageDetails, data, loading
 
             }}
         >

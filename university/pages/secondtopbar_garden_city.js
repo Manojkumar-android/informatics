@@ -1,11 +1,14 @@
 import { useState, useContext } from 'react';
 import SearchContext from '../contexts/search/searchContext';
-
+import DatabaseContext from "../contexts/search/databaseContext";
+import PublisherContext from '../contexts/search/publisherContext';
+import ItemTypeContext from '../contexts/search/itemTypeContext';
 const SecondTopBar = () => {
-  const [selected, setSelected] = useState('All');
 
-  const { term, setTerm, search } = useContext(SearchContext);
-
+  const { term, setTerm, search, loading } = useContext(SearchContext);
+  const { database, setDatabase, selected, setSelected } = useContext(DatabaseContext);
+  const { handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
+  const { handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
   const buttons = [
     'All',
     'Library Books',
@@ -17,11 +20,77 @@ const SecondTopBar = () => {
   ];
   const searchClick = async (e) => {
 
-    if (term == "") return;
+    if (term == "" && loading) return;
     e.preventDefault();
 
     search();
 
+  }
+  const checkAllDatabse = () => {
+    if (loading) return;
+    const updatedValues = database.values.map(item => ({
+      ...item,
+      checked: true
+    }));
+
+    setDatabase(prevState => ({
+      ...prevState,
+      values: updatedValues
+    }));
+    let updatedDatabase = {
+      ...database,
+      values: updatedValues
+    };
+    return updatedDatabase
+  };
+  const handleButtonChange = (label, e) => {
+    if (loading) return;
+
+    if (label == "All") {
+      const updatedDatabase = checkAllDatabse()
+      search(updatedDatabase, "database")
+
+    } else if (label == "IR") {
+      setDatabase((prevState) => ({
+        ...prevState,
+        values: prevState.values.map((option) =>
+          option.label === "DSpace"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      }));
+      let updatedDatabase = {
+        ...database,
+        values: database.values.map((option) =>
+          option.label === "DSpace"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      };
+      search(updatedDatabase, "database", true)
+
+    } else if (label == "Periodicals") {
+      setDatabase((prevState) => ({
+        ...prevState,
+        values: prevState.values.map((option) =>
+          option.label === "J-Gate"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      }));
+      let updatedDatabase = {
+        ...database,
+        values: database.values.map((option) =>
+          option.label === "J-Gate"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      };
+      search(updatedDatabase, "database")
+
+    }
+
+    setSelected(label)
   }
   return (
     <div className="bg-gray-100 text-black flex flex-col items-center space-y-4 p-4">
@@ -29,7 +98,7 @@ const SecondTopBar = () => {
         {buttons.map(button => (
           <button
             key={button}
-            onClick={() => setSelected(button)}
+            onClick={(e) => handleButtonChange(button, e)}
             className={`px-4 py-2 rounded-xl ${selected === button ? 'bg-[#F58220] text-white border-0' : 'bg-white border-0'
               } hover:bg-orange-400`}
           >

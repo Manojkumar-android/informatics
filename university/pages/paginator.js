@@ -28,7 +28,7 @@ const Paginator = ({ number, size, totalPages, totalElements, onPageUpdate, page
     pageCounter > 0 ? <div className=" flex  justify-between items-center py-4 h-[64px] px-6 bg-white shadow-md rounded-lg">
       {/* Page Info */}
       <div className="text-sm text-gray-700">
-        Showing {(number * size) - 19} to {number * size} out of {totalElements}
+        Showing {(number * size) - 9} to {number * size} out of {totalElements}
       </div>
 
       {/* Page Numbers */}

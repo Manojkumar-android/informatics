@@ -14,33 +14,34 @@ const Dashboard = () => {
             let allDocs = [];
             let currentPage = 1;
             let totalPages = 6;
-
             try {
-                while (currentPage <= totalPages) {
-                    const response = getUniversities(currentPage);
-                    if (response.success) {
-                        const universities = response.data.docs;
-                        let newArray = []
-                        for (let i = 0; i < universities.length; i++) {
-                            const docs = universities[i]
-                            const { _id, UniversityName, Email, MainLogo } = docs;
-                            newArray.push({
-                                name: UniversityName,
-                                universityId: _id,
-                                email: Email,
-                                logo: MainLogo
-                            })
+                const response = await getUniversities(1);
+                console.log(response)
+
+                if (response.success) {
+                    const universities = response.data.docs;
+                    let newArray = []
+
+                    for (let i = 0; i < universities.length; i++) {
+                        const docs = universities[i]
+                        const { _id, UniversityName, Email, MainLogo } = docs;
+                        newArray.push({
+                            name: UniversityName,
+                            universityId: _id,
+                            email: Email,
+                            logo: MainLogo
+                        })
 
 
-                        }
-                        allDocs = [...allDocs, ...newArray];
-                        totalPages = response.data.totalPages;
-                        console.log(response.data.totalPages)
-                        currentPage++;
-                    } else {
-                        throw new Error('Failed to fetch data');
                     }
+                    allDocs = [...allDocs, ...newArray];
+                    totalPages = response.data.totalPages;
+                    console.log(response.data.totalPages)
+                    currentPage++;
+                } else {
+                    throw new Error('Failed to fetch data');
                 }
+                handleInstituteResponse(allDocs)
                 setUniversities(allDocs);
             } catch (err) {
                 setError(err.message);
@@ -56,15 +57,16 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (!loading && !error) {
-            handleInstituteResponse();
+            handleInstituteResponse(universities);
         }
     }, [loading, error, universities]);
 
-    const handleInstituteResponse = () => {
+    const handleInstituteResponse = (allDocs) => {
+
         if (universities.length > 0) {
 
 
-            createUniversities(newArray)
+            createUniversities(allDocs)
                 .then(response => {
                     if (response.error) {
 
@@ -80,7 +82,6 @@ const Dashboard = () => {
                 });
 
         } else {
-            console.error(response.error);
         }
     };
     return (

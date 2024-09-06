@@ -6,7 +6,7 @@ import FilterSortBar from '../filterbar'; // Adjust the import path as necessary
 import Paginator from '../paginator'; // Adjust the import path as necessary
 import SearchContext from "../../contexts/search/searchContext";
 import paginationContext from "../../contexts/paginationContext";
-import { ThreeDots } from 'react-loader-spinner'
+import { MagnifyingGlass } from 'react-loader-spinner'
 import Link from 'next/link';
 const List = () => {
   const router = useRouter();
@@ -19,6 +19,7 @@ const List = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const booksPerPage = 10;
   const onPageUpdate = (by, type) => {
+    if (loading) return
     let counter = pageCounter
     let num = number
     let page = 1
@@ -98,6 +99,15 @@ const List = () => {
                   </div>
 
                   <div className="text-base text-black line-clamp-3" dangerouslySetInnerHTML={{ __html: book.description }} ></div>
+                  {book.resourceLogo &&
+                    <div className='mt-3 flex justify-start items-center'>
+
+                      <img
+                        src={book.resourceLogo}
+                        alt={book.title}
+                        className="w-[30px] h-[30px]"
+                      />
+                    </div>}
                 </div>
               </div>
             </div>
@@ -105,15 +115,17 @@ const List = () => {
         </div>
       </div>
         :
-        <div className='flx'>
-          <ThreeDots
+        <div className='flex flex-col'>
+          <div className='mt-5 text-subheader'>
+            Loading result...
+          </div>
+          <MagnifyingGlass
             height="80"
             width="80"
-            radius="9"
-            color="green"
+            glassColor="#c0efff"
+            color="rgba(245, 130, 32, 1)"
             ariaLabel="loading"
-            wrapperStyle
-            wrapperClass
+
           />
         </div>
       }

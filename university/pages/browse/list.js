@@ -7,9 +7,11 @@ import Paginator from '../paginator'; // Adjust the import path as necessary
 import BrowseContext from "../../contexts/browseContext";
 import Alphabet from './alphabets';
 import Link from 'next/link';
+import { MagnifyingGlass } from 'react-loader-spinner'
+
 const List = () => {
   const router = useRouter();
-  const { pageDetails, setPageDetails, data } = useContext(BrowseContext);
+  const { pageDetails, setPageDetails, data, loading } = useContext(BrowseContext);
   const { number, size, totalPages, totalElements, pageCounter } = pageDetails
 
 
@@ -59,7 +61,7 @@ const List = () => {
           totalElements={totalElements}
           totalPages={totalPages} />
       </div>
-      <div className="  mt-4 ">
+      {!loading ? <div className="  mt-4 ">
         <div className="flex flex-col gap-4">
           {data.map((book) => (
             <div
@@ -94,6 +96,15 @@ const List = () => {
                   </div>
 
                   <div className="text-base text-black line-clamp-3">{book.description}</div>
+                  {book.resourceLogo &&
+                    <div className='mt-3 flex justify-start items-center'>
+
+                      <img
+                        src={book.resourceLogo}
+                        alt={book.title}
+                        className="w-[30px] h-[30px]"
+                      />
+                    </div>}
                 </div>
               </div>
 
@@ -101,11 +112,27 @@ const List = () => {
             </div>
           ))}
         </div>
+
       </div>
-      <div className='mt-4'>
+        :
+        <div className='flex flex-col'>
+          <div className='mt-5 text-subheader'>
+            Loading result...
+          </div>
+          <MagnifyingGlass
+            height="80"
+            width="80"
+            glassColor="#c0efff"
+            color="rgba(245, 130, 32, 1)"
+            ariaLabel="loading"
+
+          />
+        </div>
+      }
+      {!loading && <div className='mt-4'>
         <Alphabet />
-      </div>
-      <div className='mt-4'>
+      </div>}
+      {!loading && <div className='mt-4'>
         <Paginator
           number={number}
           pageCounter={pageCounter}
@@ -113,7 +140,7 @@ const List = () => {
           size={size}
           totalElements={totalElements}
           totalPages={totalPages} />
-      </div>
+      </div>}
     </div>
   );
 };

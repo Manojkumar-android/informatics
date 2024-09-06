@@ -218,7 +218,7 @@ export const UserContextProvider = ({ children }) => {
                 setUserSession,
                 handleLogin,
                 userName,
-                email,
+                email, setIsLoginPopupOpen,
                 setEmail, handleForgotPassword
 
 

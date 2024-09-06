@@ -111,20 +111,20 @@ const Search = () => {
             </div>
 
         </div>
-            : <><SecondTopBar />
+            : <>
+                <SecondTopBar />
                 <div className="flex flex-grow">
                     <aside className="w-1/4 bg-gray-100">
                         <Sidebar />
                     </aside>
-                    <main className="flex-grow px-4 bg-gray-100">
+                    <main className="w-3/4 px-4 bg-gray-100">
                         <ErrorBoundary>
-
                             <List />
                         </ErrorBoundary>
                     </main>
                 </div>
-
             </>
+
     );
 }
 

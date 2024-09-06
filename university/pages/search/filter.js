@@ -4,24 +4,43 @@ import DatabaseContext from "../../contexts/search/databaseContext";
 import PaginationContext from "../../contexts/paginationContext";
 import AuthorContext from "../../contexts/search/authorContext";
 import SubjectContext from "../../contexts/search/subjectContext";
-
+import PublisherContext from '../../contexts/search/publisherContext';
+import ItemTypeContext from '../../contexts/search/itemTypeContext';
 const Sidebar = () => {
   const [openSections, setOpenSections] = useState({
     Database: true,
     Author: false,
     Subject: false,
     Date: false,
+    Publisher: false,
+    ItemType: false,
 
   });
-  const { database, setDatabase } = useContext(DatabaseContext);
+  const { database, setDatabase, selected } = useContext(DatabaseContext);
   const { author, setAuthorData, clearAuthorValues, getCheckedAuthor } = useContext(AuthorContext);
   const { pageDetails, setPageDetails } = useContext(PaginationContext);
   const { subject, setSubject, clearSubjectValues } = useContext(SubjectContext);
-  const { getFacets, search } = useContext(SearchContext);
+  const { getFacets, search, loading } = useContext(SearchContext);
+  const { publisher, setPublisher, clearPublisherValues } = useContext(PublisherContext);
+  const { itemType, setItemType, clearItemTypeValues } = useContext(ItemTypeContext);
+  const [sections, setSections] = useState([]);
+
   useEffect(() => {
-    console.log(JSON.stringify(subject))
+    // console.log(JSON.stringify(subject))
 
   }, [subject]);
+  useEffect(() => {
+    const updatedSections = [];
+
+    if (database && selected === "All") updatedSections.push(database);
+    if (author) updatedSections.push(author);
+    if (subject) updatedSections.push(subject);
+    if (publisher && selected === "IR") updatedSections.push(publisher);
+    if (itemType && selected === "IR") updatedSections.push(itemType);
+    // Add more conditions as necessary
+
+    setSections(updatedSections);
+  }, [database, author, subject, publisher, itemType, selected]);
   const handleToggleSection = (section) => {
     // alert(section)
     setOpenSections((prevState) => ({
@@ -30,6 +49,8 @@ const Sidebar = () => {
     }));
   };
   const handleCheckboxChange = (label, optionLabel, e) => {
+    if (loading) return;
+
     if (label == "Author") {
       let values = author.values
       const foundOption = values.find((option) => option.label === optionLabel);
@@ -76,6 +97,56 @@ const Sidebar = () => {
       }
       search(filter, "subject")
 
+    } else if (label == "Publisher") {
+
+      // alert(optionLabel)
+
+      let values = subject.values
+      const foundOption = values.find((option) => option.label === optionLabel);
+
+      setPublisher((prevState) => ({
+        ...prevState,
+        values: prevState.values.map((option) =>
+          option.label === optionLabel
+            ? { ...option, checked: e.target.checked }
+            : option
+        ),
+      }));
+      // const author = getCheckedAuthor()\
+      let filter = ""
+      if (e.target.checked) {
+        const encodedFSubject = encodeURIComponent(optionLabel);
+
+        filter = `${encodedFSubject},equals`
+
+      }
+      search(filter, "publisher")
+
+    } else if (label == "Item Type") {
+
+      // alert(optionLabel)
+
+      let values = subject.values
+      const foundOption = values.find((option) => option.label === optionLabel);
+
+      setItemType((prevState) => ({
+        ...prevState,
+        values: prevState.values.map((option) =>
+          option.label === optionLabel
+            ? { ...option, checked: e.target.checked }
+            : option
+        ),
+      }));
+      // const author = getCheckedAuthor()\
+      let filter = ""
+      if (e.target.checked) {
+        const encodedFSubject = encodeURIComponent(optionLabel);
+
+        filter = `${encodedFSubject},equals`
+
+      }
+      search(filter, "itemtype")
+
     } else if (label == "Database") {
 
       // alert(optionLabel)
@@ -90,8 +161,16 @@ const Sidebar = () => {
             : option
         ),
       }));
+      let updatedDatabase = {
+        ...database,
+        values: database.values.map((option) =>
+          option.label === optionLabel
+            ? { ...option, checked: e.target.checked }
+            : option
+        ),
+      };
 
-      // search(filter, "database")
+      search(updatedDatabase, "database")
 
     }
 
@@ -114,10 +193,21 @@ const Sidebar = () => {
       clearAuthorValues()
     } else if (type == "Subject") {
       clearSubjectValues()
+    } else if (type == "Publisher") {
+      clearPublisherValues()
+    } else if (type == "ItemType") {
+      clearItemTypeValues()
     }
     getFacets(href, type)
   }
-  const sections = [database, author, subject];
+  // Function to dynamically manage sections using let
+  const getSections = () => {
+
+    return sections;
+  };
+
+  // Get the sections dynamically
+  // let sections = getSections();
   function formatCount(count) {
     if (!count) return;
     if (count >= 1000) {

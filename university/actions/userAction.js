@@ -85,7 +85,7 @@ export const forgotPassword = (body) => {
 
 export const getAssignedResource = () => {
 
-    return fetch(`${local}/university/getAssignedResource?universityId=65f7dc5a0902ec383091354a`, {
+    return fetch(`${local}/university/getAssignedResource?universityId=6656fc8fad251455b687add2`, {
         method: 'GET',
         headers: {
             Accept: "application/json",

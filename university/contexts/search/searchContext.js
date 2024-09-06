@@ -5,66 +5,80 @@ import {
     useRef,
     useContext
 } from "react";
-import { getSearchData, getFacetsData }
+import { getSearchData, getFacetsData, getKohaData }
     from "../../actions/searchAction";
 const SearchContext = createContext(); // Create a context object to share the state between Components
 import DatabaseContext from "../../contexts/search/databaseContext";
 import PaginationContext from "../../contexts/paginationContext";
 import AuthorContext from "../../contexts/search/authorContext";
 import SubjectContext from "../../contexts/search/subjectContext";
-
+import PublisherContext from '../../contexts/search/publisherContext';
+import ItemTypeContext from '../../contexts/search/itemTypeContext';
 export const SearchContextProvider = ({ children }) => {
     const [term, setTerm] = useState('');
     const [call, setCall] = useState(true);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
-    const { database, setDatabase, handleDatabaseCount } = useContext(DatabaseContext);
+    const { database, setDatabase, handleDatabaseCount, logos } = useContext(DatabaseContext);
     const { author, setAuthorData, handleAuthorResponse, clearAuthorValues, getCheckedAuthor } = useContext(AuthorContext);
     const { pageDetails, setPageDetails } = useContext(PaginationContext);
     const { subject, setSubject, handleSubjectResponse, clearSubjectValues } = useContext(SubjectContext);
+    const { handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
+    const { handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
     const [landing, setLanding] = useState(0);
 
     const { number, size, totalPages, totalElements, pageCounter } = pageDetails;
 
-
-
-
-
-
-
     useEffect(() => {
         if (!term && loading) return;
+
         search(null, 'search')
-    }, [number, database]);
+    }, [number]);
 
+    const kohaSearch = () => {
+        const body = { term, logos: logos, };
 
-    const checkAllDatabse = () => {
-        const updatedValues = database.values.map(item => ({
-            ...item,
-            checked: true
-        }));
+        getKohaData(body).then(res => {
 
-        setDatabase(prevState => ({
-            ...prevState,
-            values: updatedValues
-        }));
-    };
+            if (res.error) {
+                console.log(res.error);
+            } else {
+                handleDatabaseCount(res)
+            }
+        })
+
+    }
     const search = (filter, type) => {
+        setLoading(true);
         let author = ''
         let subject = ''
+        let publisher = ''
+        let itemtype = ''
         let page = number
+        let data = database
         if (type == "author") {
             author = filter
             page = 1
         } else if (type == "subject") {
             subject = filter
             page = 1
+        } else if (type == "publisher") {
+            publisher = filter
+            page = 1
+        } else if (type == "itemtype") {
+            itemtype = filter
+            page = 1
+        } else if (type == "database") {
+            data = filter
+
         }
         clearAuthorValues()
         clearSubjectValues()
-        const db = getCheckedValues(database)
+        clearPublisherValues()
+        clearItemTypeValues()
+        const db = getCheckedValues(data)
         // Create the body object with the existing properties
-        const body = { term, page: page, database: db, author: author, subject };
+        const body = { term, page: page, database: db, logos: logos, author: author, subject, publisher, itemtype };
 
         getSearchData(body).then(res => {
 
@@ -77,21 +91,28 @@ export const SearchContextProvider = ({ children }) => {
                 handleSearchResponse(res)
                 handleAuthorResponse(res)
                 handleSubjectResponse(res)
-                //   handleDatabaseCount(res)
+                handleDatabaseCount(res)
+                handlePublisherResponse(res)
+                handleItemTypeResponse(res)
+
                 setData(res.data)
 
                 //Delay setting loading to false by 2 seconds
+                setLoading(false);
+                //  kohaSearch()
 
-                setTimeout(() => {
-                    setLoading(false);
+                // setTimeout(() => {
+                //     setLoading(false);
 
-                }, 5000);
+                // }, 500);
 
             }
         })
     }
 
     const getFacets = (href, type) => {
+        console.log("getFacets")
+        console.log(type)
         const body = { href, type }
         getFacetsData(body).then(res => {
 
@@ -99,13 +120,21 @@ export const SearchContextProvider = ({ children }) => {
                 console.log(res.error);
 
             } else {
-                console.log(JSON.stringify(res))
+                // console.log(JSON.stringify(res))
 
                 if (type == "Author") {
                     handleAuthorResponse(res)
                 } else if (type == "Subject") {
 
                     handleSubjectResponse(res)
+
+                } else if (type == "Publisher") {
+
+                    handlePublisherResponse(res)
+
+                } else if (type == "Item Type") {
+
+                    handleItemTypeResponse(res)
 
                 }
 
@@ -114,7 +143,7 @@ export const SearchContextProvider = ({ children }) => {
     }
 
 
-    const getCheckedValues = () => {
+    const getCheckedValues = (database) => {
         if (!database) return [];
         const checkedValues = database.values
             .filter(item => item.checked)

@@ -48,8 +48,7 @@ const TopBarWithoutLogout = () => {
     },
 
   ];
-  const toggleBellPopup = () => setShowBellPopup(!showBellPopup);
-  const toggleProfilePopup = () => setShowProfilePopup(!showProfilePopup);
+
   const links = [
     { href: '/e-resources', label: 'E-resources' },
     { href: '/', label: 'Search' },

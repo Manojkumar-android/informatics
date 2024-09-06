@@ -7,7 +7,9 @@ const DatabaseContext = createContext();
 
 export const DatabaseContextProvider = ({ children }) => {
     const [database, setDatabase] = useState(null)
+    const [logos, setLogos] = useState([])
     const [resources, setResources] = useState([])
+    const [selected, setSelected] = useState('All');
 
     useEffect(() => {
         getAssignedResource().then(res => {
@@ -21,7 +23,13 @@ export const DatabaseContextProvider = ({ children }) => {
                     value: resource.name.toLowerCase(), // Or another unique identifier if needed
                     checked: true // or false, based on your logic
                 }));
+                const newLogos = res.resources.map(resource => ({
+                    label: resource.name.toLowerCase(),
+                    logo: resource.logo
+                }));
+
                 setResources(res.resources)
+                setLogos(newLogos)
                 setDatabase(prevState => ({
                     ...prevState,
                     label: "Database",
@@ -34,13 +42,14 @@ export const DatabaseContextProvider = ({ children }) => {
 
         const newValues = resources.map(resource => {
             // Find the matching response object
-            const matchingResponse = resources.find(res => res.name === resource.name);
-
+            const matchingResponse = res.databaseCounts.find(res => res.name === resource.name);
+            // console.log(resource.name)
+            // console.log(res.databaseCounts)
             return {
                 label: resource.name,
                 count: matchingResponse ? matchingResponse.count : null, // Use the count from the response if a match is found
                 value: resource.name.toLowerCase(), // Or another unique identifier if needed
-                checked: true // or false, based on your logic
+                checked: matchingResponse ? true : false // or false, based on your logic
             };
         });
 
@@ -54,7 +63,7 @@ export const DatabaseContextProvider = ({ children }) => {
     }
     return (
         <DatabaseContext.Provider
-            value={{ database, setDatabase, handleDatabaseCount }}
+            value={{ logos, database, setDatabase, handleDatabaseCount, resources, selected, setSelected }}
         >
             {children}
         </DatabaseContext.Provider>
