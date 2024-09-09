@@ -383,44 +383,48 @@ exports.getData = async (req, res) => {
         if (database.includes('koha')) {
             const kohaResponse = responses.shift(); // Get the second response
             // console.log(JSON.stringify(jgateResponse.data.data))
-            const totalPages = true
 
-
-            if (totalPages) {
-                databaseCounts.push({ name: "Koha", count: "" })
-            }
             const resource = logos.find(resource => resource.label === "koha");
             let resourceLogo = null
             if (resource) resourceLogo = resource.logo
-            const kohaExtractedData = kohaResponse.data.map(item => {
-                const metadata = item;
-                const _links = {};
-                let thumbnail = null;
 
-                if (!thumbnail) thumbnail = null
-                const getFieldValue = (field) => {
-                    return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
-                };
+            if (kohaResponse.data[0] !== "No results found") {
+                const totalPages = true
 
-                return {
-                    imageUrl: thumbnail,
-                    links: _links,
-                    id: item.id,
-                    title: item.title,
-                    database: "koha",
-                    resourceLogo,
-                    author: item.author,
-                    dtype: item.description,
-                    date: item.copyrightdate,
-                    subject: "",
-                    identifier: "",
-                    description: item.abstract,
-                    publisher: item.publishercode,
 
-                };
-            });
+                if (totalPages) {
+                    databaseCounts.push({ name: "Koha", count: "" })
+                }
+                const kohaExtractedData = kohaResponse.data.map(item => {
+                    const metadata = item;
+                    const _links = {};
+                    let thumbnail = null;
 
-            extractedData = [...extractedData, ...kohaExtractedData];
+                    if (!thumbnail) thumbnail = null
+                    const getFieldValue = (field) => {
+                        return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
+                    };
+
+                    return {
+                        imageUrl: thumbnail,
+                        links: _links,
+                        id: item.id,
+                        title: item.title,
+                        database: "koha",
+                        resourceLogo,
+                        author: item.author,
+                        dtype: item.description,
+                        date: item.copyrightdate,
+                        subject: "",
+                        identifier: "",
+                        description: item.abstract,
+                        publisher: item.publishercode,
+
+                    };
+                });
+
+                extractedData = [...extractedData, ...kohaExtractedData];
+            }
             // Assuming jgateResponse contains similar structure for authorData and subjectData
             // Add logic to extract authorData and subjectData from jgateResponse if available
         }

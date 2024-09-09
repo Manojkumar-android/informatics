@@ -1,11 +1,14 @@
 import React from 'react';
 
 const Paginator = ({ number, size, totalPages, totalElements, onPageUpdate, pageCounter }) => {
+  const showing = (number * size) - 9
+  const to = number * size
+  const total = (number * size) > totalElements ? (number * size) : totalElements
+
   const getPageNumbers = () => {
     const pageNumbers = [];
     const maxPageNumbersToShow = 10;
     const halfMaxPageNumbers = Math.floor(maxPageNumbersToShow / 2);
-
     let startPage = Math.max(1, number - halfMaxPageNumbers);
     let endPage = Math.min(totalPages, number + halfMaxPageNumbers);
 
@@ -28,7 +31,7 @@ const Paginator = ({ number, size, totalPages, totalElements, onPageUpdate, page
     pageCounter > 0 ? <div className=" flex  justify-between items-center py-4 h-[64px] px-6 bg-white shadow-md rounded-lg">
       {/* Page Info */}
       <div className="text-sm text-gray-700">
-        Showing {(number * size) - 9} to {number * size} out of {totalElements}
+        Showing {showing} to {to} out of {total}
       </div>
 
       {/* Page Numbers */}

@@ -48,7 +48,8 @@ export const DatabaseContextProvider = ({ children }) => {
             return {
                 label: resource.name,
                 count: matchingResponse ? matchingResponse.count : null, // Use the count from the response if a match is found
-                value: resource.name.toLowerCase(), // Or another unique identifier if needed
+                value: resource.name.toLowerCase(),
+                disable: matchingResponse ? true : false, // Or another unique identifier if needed
                 checked: matchingResponse ? true : false // or false, based on your logic
             };
         });

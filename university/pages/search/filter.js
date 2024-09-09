@@ -48,8 +48,8 @@ const Sidebar = () => {
       [section]: !prevState[section],
     }));
   };
-  const handleCheckboxChange = (label, optionLabel, e) => {
-    if (loading) return;
+  const handleCheckboxChange = (label, optionLabel, disable, e) => {
+    if (loading || disable) return;
 
     if (label == "Author") {
       let values = author.values
@@ -267,7 +267,7 @@ const Sidebar = () => {
                         type="checkbox"
                         checked={option.checked}
                         className="mr-2 h-[18px] w-[18px] flex-shrink-0"
-                        onChange={(e) => handleCheckboxChange(section.label, option.label, e)}
+                        onChange={(e) => handleCheckboxChange(section.label, option.label, option.disable, e)}
                       />
                       <div className="flex-grow">
                         {option.label}
