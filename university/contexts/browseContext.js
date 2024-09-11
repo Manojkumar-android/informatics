@@ -15,7 +15,7 @@ export const BrowseContextProvider = ({ children }) => {
         number: 1, size: 0, totalPages: 0, totalElements: 0, pageCounter: 0
 
     })
-    const { database, setDatabase, resources, logos } = useContext(DatabaseContext);
+    const { database, setDatabase, resources, logos, handleDatabaseCount } = useContext(DatabaseContext);
     const [loading, setLoading] = useState(false);
 
     const { number, size, totalPages, totalElements, pageCounter } = pageDetails;
@@ -23,13 +23,18 @@ export const BrowseContextProvider = ({ children }) => {
 
     useEffect(() => {
         if (resources.length == 0) return;
-        browse()
+        browse(null, 'browse')
     }, [number, selectedLetter, resources]);
 
-    const browse = () => {
+    const browse = (filter, type) => {
         setLoading(true);
+        let data = database
+        if (type == "database") {
+            data = filter
+            //  alert(JSON.stringify(data))
 
-        const db = getCheckedValues(database)
+        }
+        const db = getCheckedValues(data)
         const body = { startsWith: selectedLetter, page: number, database: db, logos }
         dSpaceBrowse(body).then(res => {
 
@@ -40,6 +45,7 @@ export const BrowseContextProvider = ({ children }) => {
                 console.log(JSON.stringify(res.data))
                 //  alert(JSON.stringify(res.data))
                 setLoading(false);
+                handleDatabaseCount(res)
 
                 handleSearchResponse(res)
                 //    handleAuthorResponse(res.authorData)
@@ -50,7 +56,7 @@ export const BrowseContextProvider = ({ children }) => {
             }
         })
     }
-    const getCheckedValues = () => {
+    const getCheckedValues = (database) => {
         if (!database) return [];
         const checkedValues = database.values
             .filter(item => item.checked)
@@ -81,7 +87,7 @@ export const BrowseContextProvider = ({ children }) => {
             value={{
                 selectedLetter,
                 setSelectedLetter,
-                pageDetails, setPageDetails, data, loading
+                pageDetails, setPageDetails, data, loading, browse
 
             }}
         >

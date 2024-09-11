@@ -55,7 +55,7 @@ const List = () => {
   return (
     <div className="relative min-h-screen">
       {/* <FilterSortBar /> */}
-      <div className=''>
+      {totalElements > 0 && <div className=''>
         <Paginator
           number={number}
           pageCounter={pageCounter}
@@ -63,7 +63,7 @@ const List = () => {
           size={size}
           totalElements={totalElements}
           totalPages={totalPages} />
-      </div>
+      </div>}
       {!loading ? <div className="container  mt-4 ">
         <div className="flex flex-col gap-4">
           {data.map((book) => (

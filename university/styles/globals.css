@@ -97,3 +97,19 @@
 .no-underline {
   text-decoration: none;
 }
+.sidebar-scrollable {
+  overflow-y: auto;
+  max-height: 100%; /* Ensure the sidebar has a height limit */
+}
+
+.sidebar-scrollable::-webkit-scrollbar {
+  width: 0; /* Chrome, Safari, Opera */
+}
+
+.sidebar-scrollable {
+  scrollbar-width: none; /* Firefox */
+}
+
+.sidebar-scrollable:hover::-webkit-scrollbar {
+  width: 8px; /* Scrollbar becomes visible on hover */
+}

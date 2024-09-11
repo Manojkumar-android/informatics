@@ -15,36 +15,45 @@ import NextNProgress from "nextjs-progressbar";
 import { SubjectContextProvider } from '../contexts/search/subjectContext';
 import { PublisherContextProvider } from '../contexts/search/publisherContext';
 import { ItemTypeContextProvider } from '../contexts/search/itemTypeContext';
+import { DataTypeContextProvider } from '../contexts/search/dataTypeContext';
+import { YearFromContextContextProvider } from '../contexts/search/yearFromContext';
+import { JournalContextProvider } from '../contexts/search/journalContext';
 
 function MyApp({ Component, pageProps }) {
   return (
     <DatabaseContextProvider>
       <ToastProvider>
         <PaginationContextProvider>
-          <ItemTypeContextProvider>
-            <PublisherContextProvider>
-              <AuthorContextProvider>
-                <SubjectContextProvider>
+          <JournalContextProvider>
+            <YearFromContextContextProvider>
+              <DataTypeContextProvider>
+                <ItemTypeContextProvider>
+                  <PublisherContextProvider>
+                    <AuthorContextProvider>
+                      <SubjectContextProvider>
 
-                  <SearchContextProvider>
-                    <BrowseContextProvider>
-                      <UserContextProvider>
-
-
-                        <div className="font-roboto">
-                          <NextNProgress color='rgba(245, 130, 32, 1)' />
-                          <Component {...pageProps} />
-                        </div>
+                        <SearchContextProvider>
+                          <BrowseContextProvider>
+                            <UserContextProvider>
 
 
-                      </UserContextProvider>
-                    </BrowseContextProvider>
-                  </SearchContextProvider>
+                              <div className="font-roboto">
+                                <NextNProgress color='rgba(245, 130, 32, 1)' />
+                                <Component {...pageProps} />
+                              </div>
 
-                </SubjectContextProvider>
-              </AuthorContextProvider>
-            </PublisherContextProvider>
-          </ItemTypeContextProvider>
+
+                            </UserContextProvider>
+                          </BrowseContextProvider>
+                        </SearchContextProvider>
+
+                      </SubjectContextProvider>
+                    </AuthorContextProvider>
+                  </PublisherContextProvider>
+                </ItemTypeContextProvider>
+              </DataTypeContextProvider>
+            </YearFromContextContextProvider>
+          </JournalContextProvider>
         </PaginationContextProvider>
       </ToastProvider>
     </DatabaseContextProvider>

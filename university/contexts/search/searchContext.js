@@ -14,6 +14,9 @@ import AuthorContext from "../../contexts/search/authorContext";
 import SubjectContext from "../../contexts/search/subjectContext";
 import PublisherContext from '../../contexts/search/publisherContext';
 import ItemTypeContext from '../../contexts/search/itemTypeContext';
+import DataTypeContext from '../../contexts/search/dataTypeContext';
+import YearFromContext from '../../contexts/search/yearFromContext';
+import JournalContext from '../../contexts/search/journalContext';
 export const SearchContextProvider = ({ children }) => {
     const [term, setTerm] = useState('');
     const [call, setCall] = useState(true);
@@ -24,7 +27,10 @@ export const SearchContextProvider = ({ children }) => {
     const { pageDetails, setPageDetails } = useContext(PaginationContext);
     const { subject, setSubject, handleSubjectResponse, clearSubjectValues } = useContext(SubjectContext);
     const { handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
+    const { handleDataTypeResponse, clearDataTypeValues } = useContext(DataTypeContext);
+    const { handleYearFromResponse, clearYearFromValues } = useContext(YearFromContext);
     const { handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
+    const { handleJournalsResponse, clearJournalsValues } = useContext(JournalContext);
     const [landing, setLanding] = useState(0);
 
     const { number, size, totalPages, totalElements, pageCounter } = pageDetails;
@@ -75,7 +81,10 @@ export const SearchContextProvider = ({ children }) => {
         clearAuthorValues()
         clearSubjectValues()
         clearPublisherValues()
+        clearDataTypeValues()
+        clearYearFromValues()
         clearItemTypeValues()
+        clearJournalsValues()
         const db = getCheckedValues(data)
         // Create the body object with the existing properties
         const body = { term, page: page, database: db, logos: logos, author: author, subject, publisher, itemtype };
@@ -94,6 +103,9 @@ export const SearchContextProvider = ({ children }) => {
                 handleDatabaseCount(res)
                 handlePublisherResponse(res)
                 handleItemTypeResponse(res)
+                handleDataTypeResponse(res)
+                handleYearFromResponse(res)
+                handleJournalsResponse(res)
 
                 setData(res.data)
 
@@ -167,15 +179,29 @@ export const SearchContextProvider = ({ children }) => {
         if (number == 0) {
             number = 1;
         }
-        setPageDetails(prevState => ({
-            ...prevState,
-            number,
-            size,
-            totalPages,
-            totalElements,
-            pageCounter: number,
 
-        }));
+        if (totalElements == 0) {
+            setPageDetails(prevState => ({
+                ...prevState,
+                number: 0,
+                size: 0,
+                totalPages,
+                totalElements,
+                pageCounter: number,
+
+            }));
+        } else {
+            setPageDetails(prevState => ({
+                ...prevState,
+                number,
+                size,
+                totalPages,
+                totalElements,
+                pageCounter: number,
+
+            }));
+        }
+
     }
 
     return (

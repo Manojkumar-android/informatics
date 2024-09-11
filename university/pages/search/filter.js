@@ -6,6 +6,10 @@ import AuthorContext from "../../contexts/search/authorContext";
 import SubjectContext from "../../contexts/search/subjectContext";
 import PublisherContext from '../../contexts/search/publisherContext';
 import ItemTypeContext from '../../contexts/search/itemTypeContext';
+import DataTypeContext from '../../contexts/search/dataTypeContext';
+import YearFromContext from '../../contexts/search/yearFromContext';
+import JournalContext from '../../contexts/search/journalContext';
+
 const Sidebar = () => {
   const [openSections, setOpenSections] = useState({
     Database: true,
@@ -13,7 +17,10 @@ const Sidebar = () => {
     Subject: false,
     Date: false,
     Publisher: false,
+    DataType: false,
+    YearFrom: false,
     ItemType: false,
+    Journals: false,
 
   });
   const { database, setDatabase, selected } = useContext(DatabaseContext);
@@ -22,7 +29,11 @@ const Sidebar = () => {
   const { subject, setSubject, clearSubjectValues } = useContext(SubjectContext);
   const { getFacets, search, loading } = useContext(SearchContext);
   const { publisher, setPublisher, clearPublisherValues } = useContext(PublisherContext);
+  const { dataType, setDataType, clearDataTypeValues } = useContext(DataTypeContext);
+  const { yearFrom, setYearFrom, clearYearFromValues } = useContext(YearFromContext);
   const { itemType, setItemType, clearItemTypeValues } = useContext(ItemTypeContext);
+  const { journals, handleJournalsResponse, clearJournalsValues } = useContext(JournalContext);
+
   const [sections, setSections] = useState([]);
 
   useEffect(() => {
@@ -35,12 +46,16 @@ const Sidebar = () => {
     if (database && selected === "All") updatedSections.push(database);
     if (author) updatedSections.push(author);
     if (subject) updatedSections.push(subject);
-    if (publisher && selected === "IR") updatedSections.push(publisher);
-    if (itemType && selected === "IR") updatedSections.push(itemType);
+    //  if (publisher && selected === "OA") updatedSections.push(publisher);
+    if (publisher) updatedSections.push(publisher);
+    if (itemType && selected === "OA") updatedSections.push(itemType);
+    if (dataType && selected === "Periodicals") updatedSections.push(dataType);
+    if (yearFrom && selected === "Periodicals") updatedSections.push(yearFrom);
+    if (journals && selected === "Periodicals") updatedSections.push(journals);
     // Add more conditions as necessary
 
     setSections(updatedSections);
-  }, [database, author, subject, publisher, itemType, selected]);
+  }, [database, author, subject, publisher, itemType, dataType, yearFrom, journals, selected]);
   const handleToggleSection = (section) => {
     // alert(section)
     setOpenSections((prevState) => ({
@@ -175,13 +190,7 @@ const Sidebar = () => {
     }
 
   }
-  const handleClearAll = () => {
-    setOpenSections({
-      Author: false,
-      Subject: false,
-      Date: false
-    });
-  };
+
   const handleViewMore = (e, href, type) => {
     // alert(href)
     getFacets(href, type)
@@ -200,12 +209,6 @@ const Sidebar = () => {
     }
     getFacets(href, type)
   }
-  // Function to dynamically manage sections using let
-  const getSections = () => {
-
-    return sections;
-  };
-
   // Get the sections dynamically
   // let sections = getSections();
   function formatCount(count) {
@@ -217,7 +220,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div className=" max-h-lvh w-full px-4 bg-gray-100">
+    <div className="max-h-lvh w-full px-4 bg-gray-100">
       {/* Top Part with Filter and Clear All */}
       <div className="bg-[#F58220] text-white p-4 flex justify-between items-center rounded-t-lg">
         <div className="flex items-center">
@@ -260,7 +263,7 @@ const Sidebar = () => {
             </div>
             {openSections[section.label] && (
               <>
-                <ul className="px-0  text-[#717171]">
+                <ul className="px-0  text-[#717171] max-h-[350px] overflow-y-scroll">
                   {section.values.map((option) => (
                     <li key={option.label} className="mb-2 flex items-center">
                       <input

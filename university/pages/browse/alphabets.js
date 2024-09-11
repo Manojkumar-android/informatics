@@ -9,6 +9,7 @@ const Alphabet = () => {
     const alphabets = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
     const onAlphaChange = e => {
+
         setPageDetails(prevState => ({
             ...prevState,
             number: 1

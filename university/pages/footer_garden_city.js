@@ -2,9 +2,8 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-[#56100F]  text-white p-4">
+    <div className="w-full bg-[#56100F]  text-white p-4">
       <div className="flex justify-between">
-        {/* Left Section: Logo and Contact Information */}
         <div className="flex flex-col items-start">
           <img src="/college logo.png" alt="Logo" className="h-[50px] w-[193.42px] mr-3 mt-2" />
           <div className="mt-4">
@@ -250,7 +249,7 @@ const Footer = () => {
           margin-bottom: 24px;
         }
       `}</style>
-    </footer>
+    </div>
   );
 };
 

@@ -51,7 +51,7 @@ const List = () => {
   }
   return (
     <div className="reltive min-h-screen ">
-      <Alphabet />
+      {/* <Alphabet /> */}
       <div className='mt-4'>
         <Paginator
           number={number}
@@ -130,7 +130,7 @@ const List = () => {
         </div>
       }
       {!loading && <div className='mt-4'>
-        <Alphabet />
+        {/* <Alphabet /> */}
       </div>}
       {!loading && <div className='mt-4'>
         <Paginator

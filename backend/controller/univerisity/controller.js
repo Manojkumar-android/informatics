@@ -315,12 +315,19 @@ exports.getData = async (req, res) => {
         let publisherData = {};
         let pageDetails = {};
         let jgateSubjectData = {};
+        let jgatePublisherData = {};
         let jgateAuthorData = {};
+
+        let jgateJournalData = {};
+        let jgateYearFromData = {};
+        let jgateDataTypeData = {};
         const databaseCounts = [];
 
         if (database.includes('dspace')) {
             const dspaceResponse = responses.shift(); // Get the first response
             const resource = logos.find(resource => resource.label === "dspace");
+
+            // console.log(JSON.stringify(responses))
             let resourceLogo = null
             if (resource) resourceLogo = resource.logo
             const dspaceExtractedData = dspaceResponse.data._embedded.searchResult._embedded.objects.map(obj => {
@@ -436,6 +443,10 @@ exports.getData = async (req, res) => {
             let resourceLogo = null
             if (resource) resourceLogo = resource.logo
             const subjects = jgateResponse.data.data.jsonfacets?.subjects_name_l3?.buckets
+            const publisher = jgateResponse.data.data.jsonfacets?.publisher_name?.buckets
+            const journal = jgateResponse.data.data.jsonfacets?.journal_name?.buckets
+            const dataType = jgateResponse.data.data.jsonfacets?.data_type?.buckets
+            const yearFrom = jgateResponse.data.data.jsonfacets?.yearfrom?.buckets
             const authors = jgateResponse.data.data.jsonfacets?.authors_tk?.buckets
             if (authors && Array.isArray(authors)) {
                 let values = authors.map(item => ({
@@ -444,8 +455,8 @@ exports.getData = async (req, res) => {
                     _links: {} // You can populate _links with relevant data if needed
                 }));
 
-                jgateAuthorData['name'] = 'subject';
-                jgateAuthorData['type'] = "dspace";
+                jgateAuthorData['name'] = 'authors';
+                jgateAuthorData['type'] = "j-gate";
                 jgateAuthorData['page'] = null;
                 jgateAuthorData['_links'] = null;
                 jgateAuthorData['_embedded'] = {}; // Initialize _embedded as an object
@@ -464,6 +475,62 @@ exports.getData = async (req, res) => {
                 jgateSubjectData['_links'] = null;
                 jgateSubjectData['_embedded'] = {}; // Initialize _embedded as an object
                 jgateSubjectData['_embedded']['values'] = values; // Assign values to _embedded['values']
+            }
+            if (publisher && Array.isArray(publisher)) {
+                let values = publisher.map(item => ({
+                    label: item.val,
+                    count: item.count.toString(),
+                    _links: {} // You can populate _links with relevant data if needed
+                }));
+
+                jgatePublisherData['name'] = 'publisher';
+                jgatePublisherData['type'] = "j-gate";
+                jgatePublisherData['page'] = null;
+                jgatePublisherData['_links'] = null;
+                jgatePublisherData['_embedded'] = {}; // Initialize _embedded as an object
+                jgatePublisherData['_embedded']['values'] = values; // Assign values to _embedded['values']
+            }
+            if (dataType && Array.isArray(dataType)) {
+                let values = dataType.map(item => ({
+                    label: item.val,
+                    count: item.count.toString(),
+                    _links: {} // You can populate _links with relevant data if needed
+                }));
+
+                jgateDataTypeData['name'] = 'data Type';
+                jgateDataTypeData['type'] = "j-gate";
+                jgateDataTypeData['page'] = null;
+                jgateDataTypeData['_links'] = null;
+                jgateDataTypeData['_embedded'] = {}; // Initialize _embedded as an object
+                jgateDataTypeData['_embedded']['values'] = values; // Assign values to _embedded['values']
+            }
+            if (journal && Array.isArray(journal)) {
+                let values = journal.map(item => ({
+                    label: item.val,
+                    count: item.count.toString(),
+                    _links: {} // You can populate _links with relevant data if needed
+                }));
+
+                jgateJournalData['name'] = 'journal';
+                jgateJournalData['type'] = "j-gate";
+                jgateJournalData['page'] = null;
+                jgateJournalData['_links'] = null;
+                jgateJournalData['_embedded'] = {}; // Initialize _embedded as an object
+                jgateJournalData['_embedded']['values'] = values; // Assign values to _embedded['values']
+            }
+            if (yearFrom && Array.isArray(yearFrom)) {
+                let values = yearFrom.map(item => ({
+                    label: item.val,
+                    count: item.count.toString(),
+                    _links: {} // You can populate _links with relevant data if needed
+                }));
+
+                jgateYearFromData['name'] = 'yearFrom';
+                jgateYearFromData['type'] = "j-gate";
+                jgateYearFromData['page'] = null;
+                jgateYearFromData['_links'] = null;
+                jgateYearFromData['_embedded'] = {}; // Initialize _embedded as an object
+                jgateYearFromData['_embedded']['values'] = values; // Assign values to _embedded['values']
             }
             // console.log("subject")
             //  console.log(JSON.stringify(jgateSubjectData))
@@ -548,7 +615,19 @@ exports.getData = async (req, res) => {
                 values: mergedAuthorValues
             }
         };
+        // Merge the values arrays only if both are not null
+        const publisherValues = publisherData._embedded?.values || [];
+        const jgatePublisherValues = jgatePublisherData._embedded?.values || [];
+        const mergedPubisherValues = [...publisherValues, ...jgatePublisherValues];
 
+        // Create the merged object
+        const mergedPublisherObject = {
+            ...publisherData,
+            _embedded: {
+                ...publisherData._embedded,
+                values: mergedPubisherValues
+            }
+        };
         //   console.log(mergedAuthorObject);
 
         res.status(200).json({
@@ -556,8 +635,11 @@ exports.getData = async (req, res) => {
             data: extractedData,
             authorData: mergedAuthorObject,
             subjectData: mergedSubjectObject,
-            publisherData,
+            publisherData: mergedPublisherObject,
             itemTypeData,
+            dataType: jgateDataTypeData,
+            yearFrom: jgateYearFromData,
+            journal: jgateJournalData,
             appliedFilters,
             databaseCounts
         });
@@ -580,6 +662,7 @@ exports.getBrowseData = async (req, res) => {
         }
         const calls = [];
 
+        const databaseCounts = [];
 
         if (database.includes('dspace')) {
             const dspaceUrl = `https://idr.informaticsglobal.com/server/api/discover/browses/title/items?sort=dc.title,ASC&startsWith=${startsWith}&page=${page}&size=10&embed=thumbnail`
@@ -667,7 +750,10 @@ exports.getBrowseData = async (req, res) => {
             //     console.log(JSON.stringify(dspaceResponse.data))
             extractedData = [...extractedData, ...dspaceExtractedData];
 
+            if (dspacePageDetails) {
+                databaseCounts.push({ name: "DSpace", count: dspacePageDetails.totalElements })
 
+            }
 
 
             pageDetails = dspacePageDetails
@@ -675,56 +761,59 @@ exports.getBrowseData = async (req, res) => {
         if (database.includes('koha')) {
             const kohaResponse = responses.shift(); // Get the second response
             // console.log(JSON.stringify(jgateResponse.data.data))
-            const totalPages = true
-            const resource = logos.find(resource => resource.label === "koha");
-            let resourceLogo = null
-            if (resource) resourceLogo = resource.logo
+            if (kohaResponse.data[0] !== "No results found") {
 
-            // if (totalPages) {
-            //     databaseCounts.push({ name: "Koha", count: "" })
-            // }
+                const totalPages = true
+                const resource = logos.find(resource => resource.label === "koha");
+                let resourceLogo = null
+                if (resource) resourceLogo = resource.logo
 
-            const kohaExtractedData = kohaResponse.data.map(item => {
-                const metadata = item;
-                const _links = {};
-                let thumbnail = null;
+                if (totalPages) {
+                    databaseCounts.push({ name: "Koha", count: "" })
+                }
 
-                if (!thumbnail) thumbnail = null
-                const getFieldValue = (field) => {
-                    return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
-                };
+                const kohaExtractedData = kohaResponse.data.map(item => {
+                    const metadata = item;
+                    const _links = {};
+                    let thumbnail = null;
 
-                return {
-                    imageUrl: thumbnail,
-                    links: _links,
-                    id: item.id,
-                    title: item.title,
-                    database: "koha",
-                    author: item.author,
-                    dtype: item.description,
-                    date: item.copyrightdate,
-                    subject: "",
-                    identifier: "",
-                    description: item.abstract,
-                    publisher: item.publishercode,
-                    resourceLogo,
+                    if (!thumbnail) thumbnail = null
+                    const getFieldValue = (field) => {
+                        return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
+                    };
 
-                };
-            });
+                    return {
+                        imageUrl: thumbnail,
+                        links: _links,
+                        id: item.id,
+                        title: item.title,
+                        database: "koha",
+                        author: item.author,
+                        dtype: item.description,
+                        date: item.copyrightdate,
+                        subject: "",
+                        identifier: "",
+                        description: item.abstract,
+                        publisher: item.publishercode,
+                        resourceLogo,
 
-            extractedData = [...extractedData, ...kohaExtractedData];
-            // Assuming jgateResponse contains similar structure for authorData and subjectData
-            // Add logic to extract authorData and subjectData from jgateResponse if available
+                    };
+                });
+
+                extractedData = [...extractedData, ...kohaExtractedData];
+                // Assuming jgateResponse contains similar structure for authorData and subjectData
+                // Add logic to extract authorData and subjectData from jgateResponse if available
+            }
         }
         if (database.includes('j-gate')) {
             const jgateResponse = responses.shift(); // Get the second response
             // console.log(JSON.stringify(jgateResponse.data.data))
             const totalPages = jgateResponse.data.data.docs_total_pages
             console.log('totalPages' + totalPages)
-            // if (totalPages) {
-            //     databaseCounts.push({ name: "J-Gate", count: totalPages * 10 })
+            if (totalPages) {
+                databaseCounts.push({ name: "J-Gate", count: totalPages * 10 })
 
-            // }
+            }
             const resource = logos.find(resource => resource.label === "j-gate");
             let resourceLogo = null
             if (resource) resourceLogo = resource.logo
@@ -766,7 +855,7 @@ exports.getBrowseData = async (req, res) => {
             // Assuming jgateResponse contains similar structure for authorData and subjectData
             // Add logic to extract authorData and subjectData from jgateResponse if available
         }
-        res.status(200).json({ pageDetails, data: extractedData, });
+        res.status(200).json({ pageDetails, data: extractedData, databaseCounts });
 
     } catch (error) {
         console.error('Error processing data:', error);

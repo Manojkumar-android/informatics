@@ -50,7 +50,7 @@ const SecondTopBar = () => {
       const updatedDatabase = checkAllDatabse()
       search(updatedDatabase, "database")
 
-    } else if (label == "IR") {
+    } else if (label == "OA") {
       setDatabase((prevState) => ({
         ...prevState,
         values: prevState.values.map((option) =>
@@ -67,7 +67,7 @@ const SecondTopBar = () => {
             : { ...option, checked: false }
         ),
       };
-      search(updatedDatabase, "database", true)
+      search(updatedDatabase, "database")
 
     } else if (label == "Periodicals") {
       setDatabase((prevState) => ({
@@ -82,6 +82,25 @@ const SecondTopBar = () => {
         ...database,
         values: database.values.map((option) =>
           option.label === "J-Gate"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      };
+      search(updatedDatabase, "database")
+
+    } else if (label == "Library Books") {
+      setDatabase((prevState) => ({
+        ...prevState,
+        values: prevState.values.map((option) =>
+          option.label === "Koha"
+            ? { ...option, checked: true }
+            : { ...option, checked: false }
+        ),
+      }));
+      let updatedDatabase = {
+        ...database,
+        values: database.values.map((option) =>
+          option.label === "Koha"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
