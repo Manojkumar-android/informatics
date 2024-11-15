@@ -18,8 +18,9 @@ export const UserContextProvider = ({ children }) => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('anil.k@informaticsglobal.com');
-    const [password, setPassword] = useState('anil!@#$%');
+    //anil.k@informaticsglobal.com  // anil!@#$%
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [hasHydrated, setHasHydrated] = useState(false); // tracks whether the user's session data has been loaded ("hydrated") from local storage.
 
     const [userSession, setUserSession] = useState(null); // userSession is an state object containing the session data of the user.
@@ -81,7 +82,7 @@ export const UserContextProvider = ({ children }) => {
             return;
         }
 
-        const body = { "UserName": username, "OldPassword": oldPassword, "NewPassword": newPassword, "Library": "63e5e8effb058741f8c55775" };
+        const body = { "UserName": username, "OldPassword": oldPassword, "NewPassword": newPassword, "Library": process.env.NEXT_PUBLIC_LIBRARY_ID };
         const resetPass = async (body) => {
             try {
                 const { success, msg } = await resetPassword(body);
@@ -122,7 +123,7 @@ export const UserContextProvider = ({ children }) => {
         }
 
         /// const body = { "email": email, };
-        const body = { "Email": email, "UserName": username, "Library": "63e5e8effb058741f8c55775" };
+        const body = { "Email": email, "UserName": username, "Library": process.env.NEXT_PUBLIC_LIBRARY_ID };
         console.log(body)
 
         const forgotPass = async (body) => {
@@ -164,7 +165,7 @@ export const UserContextProvider = ({ children }) => {
             addToast("Password cannot be empty", "info");
             return;
         }
-        const body = { "UserName": username, "Password": password, "Library": "63e5e8effb058741f8c55775" };
+        const body = { "UserName": username, "Password": password, "Library": process.env.NEXT_PUBLIC_LIBRARY_ID };
         const userSignin = async (body) => {
             try {
                 const { success, msg, user, token } = await login(body);

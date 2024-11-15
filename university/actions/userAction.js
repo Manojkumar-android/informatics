@@ -1,6 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
-const url = "https://iras-api.informaticsglobal.com"
+const url = process.env.NEXT_PUBLIC_IRAS_API
 const local = process.env.NEXT_PUBLIC_API_SERVER_URL
 export const login = (body) => {
 
@@ -85,7 +85,7 @@ export const forgotPassword = (body) => {
 
 export const getAssignedResource = () => {
 
-    return fetch(`${local}/university/getAssignedResource?universityId=6656fc8fad251455b687add2`, {
+    return fetch(`${local}/university/getAssignedResource?universityId=${process.env.NEXT_PUBLIC_UNIVERSITY_ID}`, {
         method: 'GET',
         headers: {
             Accept: "application/json",

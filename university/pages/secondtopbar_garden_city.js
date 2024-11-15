@@ -1,14 +1,21 @@
-import { useState, useContext } from 'react';
+import { useRef, useContext } from 'react';
 import SearchContext from '../contexts/search/searchContext';
 import DatabaseContext from "../contexts/search/databaseContext";
 import PublisherContext from '../contexts/search/publisherContext';
 import ItemTypeContext from '../contexts/search/itemTypeContext';
+import { Tooltip } from 'primereact/tooltip';
+import PaginationContext from "../contexts/paginationContext";
+
 const SecondTopBar = () => {
+  const inputRef = useRef(null);
 
   const { term, setTerm, search, loading } = useContext(SearchContext);
   const { database, setDatabase, selected, setSelected } = useContext(DatabaseContext);
   const { handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
   const { handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
+  const { pageDetails, setPageDetails } = useContext(PaginationContext);
+  const { number, size, totalPages, totalElements, pageCounter } = pageDetails;
+
   const buttons = [
     'All',
     'Library Books',
@@ -23,7 +30,7 @@ const SecondTopBar = () => {
     if (term == "" && loading) return;
     e.preventDefault();
 
-    search();
+    search(null, null, null, null, 1);
 
   }
   const checkAllDatabse = () => {
@@ -48,13 +55,13 @@ const SecondTopBar = () => {
 
     if (label == "All") {
       const updatedDatabase = checkAllDatabse()
-      search(updatedDatabase, "database")
+      search(null, "database", null, updatedDatabase, 1)
 
     } else if (label == "OA") {
       setDatabase((prevState) => ({
         ...prevState,
         values: prevState.values.map((option) =>
-          option.label === "DSpace"
+          option.type === "DSpace"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
@@ -62,18 +69,18 @@ const SecondTopBar = () => {
       let updatedDatabase = {
         ...database,
         values: database.values.map((option) =>
-          option.label === "DSpace"
+          option.type === "DSpace"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
       };
-      search(updatedDatabase, "database")
+      search(null, "database", null, updatedDatabase, 1)
 
     } else if (label == "Periodicals") {
       setDatabase((prevState) => ({
         ...prevState,
         values: prevState.values.map((option) =>
-          option.label === "J-Gate"
+          option.type === "J-Gate"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
@@ -81,18 +88,18 @@ const SecondTopBar = () => {
       let updatedDatabase = {
         ...database,
         values: database.values.map((option) =>
-          option.label === "J-Gate"
+          option.type === "J-Gate"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
       };
-      search(updatedDatabase, "database")
+      search(null, "database", null, updatedDatabase, 1)
 
     } else if (label == "Library Books") {
       setDatabase((prevState) => ({
         ...prevState,
         values: prevState.values.map((option) =>
-          option.label === "Koha"
+          option.type === "Koha"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
@@ -100,16 +107,21 @@ const SecondTopBar = () => {
       let updatedDatabase = {
         ...database,
         values: database.values.map((option) =>
-          option.label === "Koha"
+          option.type === "Koha"
             ? { ...option, checked: true }
             : { ...option, checked: false }
         ),
       };
-      search(updatedDatabase, "database")
+      search(null, "database", null, updatedDatabase, 1)
 
     }
 
     setSelected(label)
+  }
+  const clearTerm = (e) => {
+    if (loading) return;
+    setTerm('')
+    inputRef.current.focus();
   }
   return (
     <div className="bg-gray-100 text-black flex flex-col items-center space-y-4 p-4">
@@ -131,9 +143,22 @@ const SecondTopBar = () => {
             type="text"
             placeholder="Enter search items..."
             value={term}
+            ref={inputRef}
             onChange={(e) => setTerm(e.target.value)}
             className="flex-grow p-4 h-full rounded-l-lg outline-none border-0 text-subheader"
           />
+          <img
+            src='/assets/icons/close.png'
+            height="22px"
+            width="22px"
+            className='mx-5 cursor-pointer'
+            data-pr-tooltip="Clear" // Tooltip text
+            data-pr-position="top"  // Tooltip position (optional)
+            id="closeIcon"
+            onClick={clearTerm}
+          ></img>
+          <Tooltip target="#closeIcon" />
+
           <button type='submit' className="bg-[#F58220] p-4 rounded-r-lg h-full border-0 cursor-pointer" >
             <svg
               xmlns="http://www.w3.org/2000/svg"

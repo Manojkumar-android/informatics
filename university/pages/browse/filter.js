@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import BrowseContext from "../../contexts/browseContext";
+import BrowseContext from "../../contexts/browse/browseContext";
 import DatabaseContext from "../../contexts/search/databaseContext";
 import PaginationContext from "../../contexts/paginationContext";
 import AuthorContext from "../../contexts/search/authorContext";
@@ -17,18 +17,14 @@ const Sidebar = () => {
 
   });
   const { database, setDatabase, selected } = useContext(DatabaseContext);
-  const { author, setAuthorData, clearAuthorValues, getCheckedAuthor } = useContext(AuthorContext);
-  const { pageDetails, setPageDetails } = useContext(PaginationContext);
   const { subject, setSubject, clearSubjectValues } = useContext(SubjectContext);
   const { browse, loading } = useContext(BrowseContext);
   const { publisher, setPublisher, clearPublisherValues } = useContext(PublisherContext);
-  const { itemType, setItemType, clearItemTypeValues } = useContext(ItemTypeContext);
   const [sections, setSections] = useState([]);
 
   useEffect(() => {
-    // console.log(JSON.stringify(subject))
 
-  }, [subject]);
+  }, []);
   useEffect(() => {
     const updatedSections = [];
 

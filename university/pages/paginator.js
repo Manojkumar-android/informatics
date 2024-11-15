@@ -1,9 +1,13 @@
 import React from 'react';
+import { useState, useContext, useEffect } from 'react';
+import SearchContext from "../contexts/search/searchContext";
 
 const Paginator = ({ number, size, totalPages, totalElements, onPageUpdate, pageCounter }) => {
+  const { getFacets, search, loading, searchFacets, data } = useContext(SearchContext);
+
   const showing = (number * size) - 9
-  const to = number * size
-  const total = (number * size) > totalElements ? (number * size) : totalElements
+  const to = totalElements > 10 ? number * size : totalElements
+  const total = totalElements
 
   const getPageNumbers = () => {
     const pageNumbers = [];

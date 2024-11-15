@@ -1,8 +1,8 @@
 import React, { createContext, useState } from 'react';
 
-const PublisherContext = createContext();
+const BrowsePublisherContext = createContext();
 
-export const PublisherContextProvider = ({ children }) => {
+export const BrowsePublisherContextProvider = ({ children }) => {
     const [publisher, setPublisher] = useState({})
 
     const handlePublisherResponse = (res) => {
@@ -63,7 +63,7 @@ export const PublisherContextProvider = ({ children }) => {
         }));
     };
     return (
-        <PublisherContext.Provider
+        <BrowsePublisherContext.Provider
             value={{
                 publisher,
                 setPublisher,
@@ -73,7 +73,7 @@ export const PublisherContextProvider = ({ children }) => {
             }}
         >
             {children}
-        </PublisherContext.Provider>
+        </BrowsePublisherContext.Provider>
     );
 }
-export default PublisherContext;
+export default BrowsePublisherContext;

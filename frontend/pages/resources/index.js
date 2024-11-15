@@ -8,7 +8,7 @@ import { getResource, createResource } from '../../actions/admin/resouceAction';
 import { isAuth } from '../../actions/admin/universitiesAction';
 
 import { Button } from 'primereact/button';
-import { FiPlus } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
 import Router from 'next/router';
 
 const Resources = () => {
@@ -34,6 +34,29 @@ const Resources = () => {
 
             });
 
+    };
+    const searchApiLinkTemplate = (rowData) => {
+        return (
+            <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', width: '200px' }}>
+                {rowData.searchApiLink}
+            </div>
+        );
+    };
+
+    const browseApiLinkTemplate = (rowData) => {
+        return (
+            <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', width: '200px' }}>
+                {rowData.browseApiLink}
+            </div>
+        );
+    };
+    const editResource = (rowData) => {
+        return (
+            <Link legacyBehavior href={{
+                pathname: '/resources/editResource',
+                query: { id: rowData._id },
+            }}><a>     <i className="mx-2"  ><FiEdit size='18px' color='#00C5B2' /></i></a></Link>
+        )
     };
     const logoBodyTemplate = (rowData) => {
         return <img src={rowData.logo} alt={rowData.name} style={{ width: '50px', height: '50px' }} />;
@@ -61,8 +84,10 @@ const Resources = () => {
                         >
                             <Column body={logoBodyTemplate} header="Logo"></Column>
                             <Column field="name" header="Name"></Column>
-                            <Column field="searchApiLink" header="Source API Link" ></Column>
-                            <Column field="browseApiLink" header="Browse API Link"></Column>
+                            <Column field="searchApiLink" body={searchApiLinkTemplate} header="Source API Link" ></Column>
+                            <Column field="browseApiLink" body={browseApiLinkTemplate} header="Browse API Link"  ></Column>
+                            <Column body={editResource} header="Action"></Column>
+
                         </DataTable>
                     </div>
                 </>} />

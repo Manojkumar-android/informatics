@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import ErrorBoundary from '../errorBoundary';
 
-import BrowseContext from "../../contexts/browseContext";
+import BrowseContext from "../../contexts/browse/browseContext";
 import Footer from '../footer_garden_city';
 import TopBarWithoutLogout from '../topbarwithoutlogout';
 import List from './list';

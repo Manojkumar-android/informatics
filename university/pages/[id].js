@@ -48,7 +48,20 @@ const Details = () => {
   }
   const handleClick = (e, link) => {
     if (!link) return;
-    window.open(link, '_blank');
+    let externalLink = link
+    if (externalLink.includes("https://idr.informaticsglobal.com")) {
+      const newBaseUrl = "https://idr-informaticsglobal-com.irasdemo.informaticsglobal.com";
+
+      externalLink = externalLink.replace("https://idr.informaticsglobal.com", newBaseUrl);
+    }
+
+    if (externalLink.includes("https://jgatenext.com")) {
+      const newBaseUrl = "https://jgatenext-com.irasdemo.informaticsglobal.com";
+
+      externalLink = externalLink.replace("https://jgatenext.com", newBaseUrl);
+    }
+    // alert(externalLink)
+    window.open(externalLink, '_blank');
   };
   return (
     <div>
@@ -81,7 +94,7 @@ const Details = () => {
             </div>}  */}
             <div className='my-3'>
               <button
-                onClick={(e) => userSession ? handleClick(e, bookDetails.externalLink) : setIsLoginPopupOpen(true)}
+                onClick={(e) => !userSession ? handleClick(e, bookDetails.externalLink) : setIsLoginPopupOpen(true)}
                 className={`w-[200px] cursor-pointer border-0   text-[18px]   mt-6  py-3 ${userSession ? 'bg-secondary text-white' : 'bg-gray-200 text-black'} rounded-md  `}
 
               >

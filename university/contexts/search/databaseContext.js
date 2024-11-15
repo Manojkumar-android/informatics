@@ -19,15 +19,18 @@ export const DatabaseContextProvider = ({ children }) => {
             } else {
                 const newValues = res.resources.map(resource => ({
                     label: resource.name,
+                    type: resource.database,
+                    browseApiLink: resource.browseApiLink,
+                    searchApiLink: resource.searchApiLink,
+                    searchHeader: resource.searchHeader,
                     count: null,
-                    value: resource.name.toLowerCase(), // Or another unique identifier if needed
-                    checked: true // or false, based on your logic
+                    value: resource.database.toLowerCase(), // Or another unique identifier if needed
+                    checked: true
                 }));
                 const newLogos = res.resources.map(resource => ({
-                    label: resource.name.toLowerCase(),
+                    label: resource.database.toLowerCase(),
                     logo: resource.logo
                 }));
-
                 setResources(res.resources)
                 setLogos(newLogos)
                 setDatabase(prevState => ({
@@ -42,14 +45,19 @@ export const DatabaseContextProvider = ({ children }) => {
 
         const newValues = resources.map(resource => {
             // Find the matching response object
-            const matchingResponse = res.databaseCounts.find(res => res.name === resource.name);
+            const matchingResponse = res.databaseCounts.find(item => item.name === resource.database);
             // console.log(resource.name)
             // console.log(res.databaseCounts)
             return {
                 label: resource.name,
+                type: resource.database,
+                browseApiLink: resource.browseApiLink,
+                searchApiLink: resource.searchApiLink,
+                searchHeader: resource.searchHeader,
+
                 count: matchingResponse ? matchingResponse.count : null, // Use the count from the response if a match is found
-                value: resource.name.toLowerCase(),
-                disable: matchingResponse ? true : false, // Or another unique identifier if needed
+                value: resource.database.toLowerCase(),
+                disable: false, // Or another unique identifier if needed
                 checked: matchingResponse ? true : false // or false, based on your logic
             };
         });

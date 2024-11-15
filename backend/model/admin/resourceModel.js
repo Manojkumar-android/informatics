@@ -5,11 +5,7 @@ const headerSchema = new mongoose.Schema({
     keyValue: { type: String, required: true }
 }, { _id: false });
 
-const resourceTypeSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    resourceTypeId: { type: String, required: true },
-    displayName: { type: String, required: true }
-}, { _id: false });
+
 
 const resourceSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -18,6 +14,7 @@ const resourceSchema = new mongoose.Schema({
     browseApiLink: { type: String, required: true },
     publisherWebsite: { type: String, default: '' },
     description: { type: String, default: '' },
+    database: { type: String, default: '', required: true },
     resourcesTypes: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ResourceType' }], default: [] },
     status: { type: Number, default: 1 },
     searchHeader: { type: headerSchema, default: null }

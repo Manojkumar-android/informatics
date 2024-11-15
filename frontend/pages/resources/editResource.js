@@ -3,13 +3,15 @@ import MainScreen from "../mainScreen";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ToastContainer, toast } from 'react-toastify';
-import { getResource, createResource, getResourceType } from '../../actions/admin/resouceAction';
+import { getResourcesById, updateResource, getResourceType } from '../../actions/admin/resouceAction';
 import Link from "next/link";
 import { FileUpload } from 'primereact/fileupload';
-import Router from "next/router";
+import Router, { useRouter } from 'next/router';
 
 
-const AddResource = () => {
+const EditResource = () => {
+    const router = useRouter()
+    const { id } = router.query
     const [resource, addResource] = useState({
         logo: null,
         name: "",
@@ -30,8 +32,13 @@ const AddResource = () => {
     const [rTypes, setRTypes] = useState([]);
 
     useEffect(() => {
+        loadResourceData()
+    }, []);
+
+    useEffect(() => {
         loadData()
     }, []);
+
     const loadData = () => {
         getResourceType()
             .then(response => {
@@ -43,6 +50,33 @@ const AddResource = () => {
                         status: false
                     }));
                     setRTypes(newArray);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching getResources:', error);
+                toast.error(error.message || 'Failed to load resource types');
+            });
+    };
+    const loadResourceData = () => {
+        getResourcesById(id)
+            .then(response => {
+                if (response) {
+                    // alert(JSON.stringify(response))
+                    addResource(prevState => ({
+                        ...prevState,
+                        logo: response.logo,
+                        name: response.name,
+                        searchApiLink: response.searchApiLink,
+                        publisherWebsite: response.publisherWebsite,
+                        searchHeaderParam: response.searchHeader.paramName,
+                        searchHeaderValue: response.searchHeader.keyValue,
+                        browseApiLink: response.browseApiLink,
+                        description: response.description,
+                        database: response.database,
+                        resourceTypes: response.resourceTypes,
+                    }));
+
+                    setLogoPath(response.logo)
                 }
             })
             .catch(error => {
@@ -81,6 +115,7 @@ const AddResource = () => {
 
     }
     const handleSubmit = async (e) => {
+        if (!id) return;
         e.preventDefault();
         const formData = new FormData();
         formData.append('logo', resource.logo);
@@ -99,14 +134,14 @@ const AddResource = () => {
 
 
         try {
-            const response = await createResource(formData);
+            const response = await updateResource(formData, id);
 
             if (response.error) {
                 toast.error(response.message);
 
             } else {
                 Router.push(`/resources`);
-                toast.success('Resource created successfully');
+                toast.success('Resource updated successfully');
 
 
             }
@@ -120,7 +155,7 @@ const AddResource = () => {
         <div >
             <ToastContainer autoClose={2000} position="top-center" />
 
-            <MainScreen page="Add Resource" children={
+            <MainScreen page="Edit Resource" children={
                 <>
                     <div className="flex  justify-between items-center p-6">
                         <div className="flex gap-4 items-center">
@@ -131,7 +166,7 @@ const AddResource = () => {
                                 </div>
                             </Link>
                             <img src="/assets/icons/rightArrow.svg" alt="" height="15px" width="15px" />
-                            <div className="text-subheader text-primary  cursor-pointer">Add Resource</div>
+                            <div className="text-subheader text-primary  cursor-pointer">Edit Resource</div>
                         </div>
                     </div>
                     <div className="p-6 top-5">
@@ -272,4 +307,4 @@ const AddResource = () => {
 
 }
 
-export default AddResource;
+export default EditResource;

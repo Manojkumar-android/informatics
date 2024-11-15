@@ -16,7 +16,7 @@ export const DataTypeContextProvider = ({ children }) => {
 
         let authorFilters = []
         if (res.appliedFilters) {
-            authorFilters = res.appliedFilters.filter(filter => filter.filter === 'dataType');
+            authorFilters = res.appliedFilters.filter(filter => filter.filter === 'datatype');
         }
         //  alert(JSON.stringify(authorFilters))
         const updatedValues = _embedded.values.map(item => ({

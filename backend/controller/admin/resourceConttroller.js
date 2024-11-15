@@ -11,6 +11,7 @@ exports.createResource = async (req, res) => {
             description,
             resourcesTypes,
             status,
+            database,
             searchHeaderValue,
             searchHeaderParam
         } = req.body;
@@ -38,6 +39,7 @@ exports.createResource = async (req, res) => {
             browseApiLink,
             publisherWebsite,
             description,
+            database,
             resourcesTypes: JSON.parse(resourcesTypes),
             searchHeader,
             status,
@@ -53,7 +55,76 @@ exports.createResource = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+exports.updateResource = async (req, res) => {
+    try {
+        const { resourceId } = req.query; // Get the resource ID from the route query
 
+        const {
+            name,
+            searchApiLink,
+            publisherWebsite,
+            browseApiLink,
+            description,
+            resourcesTypes,
+            status,
+            database,
+            searchHeaderValue,
+            searchHeaderParam
+        } = req.body;
+
+        let searchHeader = null;
+        let logo = "";
+
+        // Check if searchHeaderParam and searchHeaderValue exist and form searchHeader object
+        if (searchHeaderParam && searchHeaderValue) {
+            searchHeader = {
+                paramName: searchHeaderParam,
+                keyValue: searchHeaderValue
+            };
+        }
+
+        // Handle logo if a file is uploaded
+        if (req.file) {
+            logo = process.env.IMAGE_URL + "resource/" + req.file.filename;
+        }
+
+        // Construct the updated resource data
+        const updatedData = {
+            name,
+            searchApiLink,
+            browseApiLink,
+            publisherWebsite,
+            description,
+            database,
+            resourcesTypes: JSON.parse(resourcesTypes),
+            searchHeader,
+            status,
+        };
+
+        // If a new logo is uploaded, update the logo field as well
+        if (logo) {
+            updatedData.logo = logo;
+        }
+
+        // Update the resource document in the database by ID
+        const updatedResource = await Resource.findByIdAndUpdate(
+            resourceId, // Find the resource by its ID
+            updatedData, // The new data to update the resource with
+            { new: true } // Return the updated resource after modification
+        );
+
+        // If the resource with the provided ID is not found
+        if (!updatedResource) {
+            return res.status(404).json({ message: 'Resource not found' });
+        }
+
+        // Respond with the updated resource
+        res.status(200).json(updatedResource);
+    } catch (error) {
+        // Handle errors
+        res.status(400).json({ error: error.message });
+    }
+};
 exports.getResources = async (req, res) => {
     try {
         // Fetch all resources from the database
@@ -61,6 +132,21 @@ exports.getResources = async (req, res) => {
 
         // Respond with the fetched resources
         res.status(200).json(resources);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+exports.getResourcesById = async (req, res) => {
+    try {
+        const {
+            resourceId
+        } = req.query;
+        // Fetch all resources from the database
+        const resource = await Resource.findById(resourceId);
+
+        // Respond with the fetched resources
+        res.status(200).json(resource);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

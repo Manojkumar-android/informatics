@@ -4,14 +4,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 import FilterSortBar from '../filterbar'; // Adjust the import path as necessary
 import Paginator from '../paginator'; // Adjust the import path as necessary
-import BrowseContext from "../../contexts/browseContext";
+import BrowseContext from "../../contexts/browse/browseContext";
 import Alphabet from './alphabets';
 import Link from 'next/link';
 import { MagnifyingGlass } from 'react-loader-spinner'
 
 const List = () => {
   const router = useRouter();
-  const { pageDetails, setPageDetails, data, loading } = useContext(BrowseContext);
+  const { pageDetails, setPageDetails, data, loading, browse } = useContext(BrowseContext);
   const { number, size, totalPages, totalElements, pageCounter } = pageDetails
 
 
@@ -29,19 +29,26 @@ const List = () => {
     //   router.push(`/garden_city_university/${bookId}`);
   };
   const onPageUpdate = (by, type) => {
+    if (loading || !data) return
+
     let counter = pageCounter
     let num = number
     if (by == "number") {
       setPageDetails({ ...pageDetails, number: type, pageCounter: counter + num })
+      let page = type
+
+      browse(null, null, page);
     } else {
       let newPage = number
       if (type == "next") {
         newPage = newPage + 1
         setPageDetails({ ...pageDetails, number: newPage, pageCounter: counter + num })
+        browse(null, null, newPage);
 
       } else if (type == "prev") {
         newPage = newPage - 1
         setPageDetails({ ...pageDetails, number: newPage, pageCounter: counter + num })
+        browse(null, null, newPage);
 
       }
 
@@ -62,7 +69,7 @@ const List = () => {
           totalPages={totalPages} />
       </div>
       {!loading ? <div className="  mt-4 ">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 w-full">
           {data.map((book) => (
             <div
               key={book.id}

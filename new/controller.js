@@ -21,7 +21,7 @@ exports.getAssignedResource = async (req, res) => {
         if (!university) {
             return res.status(400).json({ message: 'university not found' });
         }
-        //   console.log(JSON.stringify(university.resources))
+        console.log(JSON.stringify(university.resources))
         // Respond with the fetched resources
         res.status(200).json({ resources: university.resources });
     } catch (error) {
@@ -44,22 +44,22 @@ exports.getFacetsSearch = async (req, res) => {
             case "Author":
                 key = "authorData";
 
-                url = `${process.env.IDR_URL}/server/api/discover/facets/author?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
-                //    console.log(url)
+                url = `https://idr.informaticsglobal.com/server/api/discover/facets/author?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
+                console.log(url)
                 break;
             case "Subject":
                 key = "subjectData";
-                url = `${process.env.IDR_URL}/server/api/discover/facets/subject?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
+                url = `https://idr.informaticsglobal.com/server/api/discover/facets/subject?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
 
                 break;
             case "Publisher":
                 key = "publisherData";
-                url = `${process.env.IDR_URL}/server/api/discover/facets/publisher?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
+                url = `https://idr.informaticsglobal.com/server/api/discover/facets/publisher?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
 
                 break;
             case "Item Type":
                 key = "itemTypeData";
-                url = `${process.env.IDR_URL}/server/api/discover/facets/itemtype?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
+                url = `https://idr.informaticsglobal.com/server/api/discover/facets/itemtype?prefix=${prefix}&page=0&size=5&query=${term}${fAuthor}${fSubject}${fPublisher}${fItemtype}`
 
                 break;
             default:
@@ -98,7 +98,7 @@ exports.getFacetsData = async (req, res) => {
             return res.status(400).json({ message: 'href or type not found' });
         }
 
-        //  console.log(type);
+        console.log(type);
 
         // Map the type to the corresponding key
         let key;
@@ -340,102 +340,38 @@ exports.getData = async (req, res) => {
         if (!term) {
             return res.status(400).json({ message: 'Query term is required' });
         }
-        // console.log(req.body)
+        console.log(req.body)
         const calls = [];
         let fAuthor = ''
         let fSubject = ''
         let fPublisher = ''
         let fItemtype = ''
-        let appliedFilters = [];
-
-        let jAuthor = ''
-        let jSubject = ''
-        let jPublisher = ''
-        let jDataType = ''
-        let jYearFrom = ''
-        let jJournals = ''
-
         const labels = dbLinks.map(item => item.label);
         if (filter) {
             filter.map(obj => {
                 if (obj.type === "author") {
                     if (fAuthor !== '') {
-                        fAuthor = `${fAuthor}&f.author=${obj.value},equals`;
+                        fAuthor = `${fAuthor}&f.author=${obj.value}`;
                     } else {
-                        fAuthor = `&f.author=${obj.value},equals`;
-                    }
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-
-                    if (jAuthor !== '') {
-                        jAuthor = `(${jAuthor} OR "${decodedLabel}")`;
-                    } else {
-                        jAuthor = `("${decodedLabel}")`;
+                        fAuthor = `&f.author=${obj.value}`;
                     }
                 } else if (obj.type === "subject") {
                     if (fSubject !== '') {
-                        fSubject = `${fSubject}&f.subject=${obj.value},equals`;
+                        fSubject = `${fSubject}&f.subject=${obj.value}`;
                     } else {
-                        fSubject = `&f.subject=${obj.value},equals`;
-                    }
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-
-                    if (jSubject !== '') {
-                        jSubject = `(${jSubject} OR "${decodedLabel}")`;
-                    } else {
-                        jSubject = `("${decodedLabel}")`;
+                        fSubject = `&f.subject=${obj.value}`;
                     }
                 } else if (obj.type === "publisher") {
                     if (fPublisher !== '') {
-                        fPublisher = `${fPublisher}&f.publisher=${obj.value},equals`;
+                        fPublisher = `${fPublisher}&f.publisher=${obj.value}`;
                     } else {
-                        fPublisher = `&f.publisher=${obj.value},equals`;
-                    }
-
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-
-                    if (jPublisher !== '') {
-                        jPublisher = `(${jPublisher} OR "${decodedLabel}")`;
-                    } else {
-                        jPublisher = `("${decodedLabel}")`;
+                        fPublisher = `&f.publisher=${obj.value}`;
                     }
                 } else if (obj.type === "itemtype") {
                     if (fItemtype !== '') {
-                        fItemtype = `${fItemtype}&f.itemtype=${obj.value},equals`;
+                        fItemtype = `${fItemtype}&f.itemtype=${obj.value}`;
                     } else {
-                        fItemtype = `&f.itemtype=${obj.value},equals`;
-                    }
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-
-                } else if (obj.type === "datatype") {
-
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-                    if (jDataType !== '') {
-                        jDataType = `(${jDataType} OR "${decodedLabel}")`;
-                    } else {
-                        jDataType = `("${decodedLabel}")`;
-                    }
-                } else if (obj.type === "yearFrom") {
-
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-                    if (jYearFrom !== '') {
-                        jYearFrom = `(${jYearFrom} OR "${decodedLabel}")`;
-                    } else {
-                        jYearFrom = `("${decodedLabel}")`;
-                    }
-                } else if (obj.type === "journals") {
-
-                    const decodedLabel = decodeURIComponent(obj.value);
-                    appliedFilters.push({ filter: obj.type, value: decodedLabel, label: decodedLabel })
-                    if (jJournals !== '') {
-                        jJournals = `(${jJournals} OR "${decodedLabel}")`;
-                    } else {
-                        jJournals = `("${decodedLabel}")`;
+                        fItemtype = `&f.itemtype=${obj.value}`;
                     }
                 }
             });
@@ -445,35 +381,18 @@ exports.getData = async (req, res) => {
 
 
         if (labels.includes('DSpace')) {
-            const result = dbLinks.find(item => item.label === "DSpace");
-            const value = result ? result.value : null;
-            const dspaceUrl = `${value}${term}&sort=score,DESC&embed=thumbnail&embed=item%2Fthumbnail&page=${page}&size=10${fAuthor}${fSubject}${fPublisher}${fItemtype}`;
-            const dspaceConfig = {
-                method: 'get',
-                maxBodyLength: Infinity,
-                url: dspaceUrl
-            };
-            calls.push(axios.request(dspaceConfig));
-        }
+            const dspaceLinks = dbLinks.filter(item => item.label === "DSpace");
 
-        if (labels.includes('J-Gate')) {
-            const result = dbLinks.find(item => item.label === "J-Gate");
-            const value = result ? result.value : null;
-            const headers = result ? result.searchHeader : null
-            const jgateUrl = `${value}${term}&rows=10&page=${page + 1}&facets=all&author_filter=${jAuthor}&subject_filter=${jSubject}&publisher_filter=${jPublisher}&datatype_filter=${jDataType}&year_filter=${jYearFrom}&journal_filter=${jJournals}`;
-            //  console.log(`J-Gate url ${jgateUrl}`)
-            const paramName = headers.paramName
-            const keyValue = headers.keyValue
-            const jgateConfig = {
-                method: 'get',
-                maxBodyLength: Infinity,
-                url: jgateUrl,
-                headers: {
-                    [paramName]: keyValue // Add any required headers here
-                },
-
-            };
-            calls.push(axios.request(jgateConfig));
+            dspaceLinks.forEach(result => {
+                const value = result ? result.value : null;
+                const dspaceUrl = `${value}${term}&sort=score,DESC&embed=thumbnail&embed=item%2Fthumbnail&page=${page}&size=10${fAuthor}${fSubject}${fPublisher}${fItemtype}`;
+                const dspaceConfig = {
+                    method: 'get',
+                    maxBodyLength: Infinity,
+                    url: dspaceUrl
+                };
+                calls.push({ label: 'DSpace', request: axios.request(dspaceConfig) });
+            });
         }
         if (labels.includes('Koha')) {
             const result = dbLinks.find(item => item.label === "Koha");
@@ -486,22 +405,42 @@ exports.getData = async (req, res) => {
                 httpsAgent: agent
 
             };
-            calls.push(axios.request(kohaConfig));
+            calls.push({ label: 'Koha', request: axios.request(kohaConfig) });
+
+            //  calls.push(axios.request(kohaConfig));
         }
 
+        if (labels.includes('J-Gate')) {
+            const result = dbLinks.find(item => item.label === "J-Gate");
+            const value = result ? result.value : null;
+            const jgateUrl = `${value}${term}&rows=10&page=${page}&facets=all`;
+
+            const jgateConfig = {
+                method: 'get',
+                maxBodyLength: Infinity,
+                url: jgateUrl,
+                headers: {
+                    'Api-Key': 'e54d44315dab474eb71a0db1fcb9e659' // Add any required headers here
+                },
+
+            };
+            //   calls.push(axios.request(jgateConfig));
+            calls.push({ label: 'J-Gate', request: axios.request(kohaConfig) });
+
+        }
 
         // Make API calls in parallel using Promise.all
-        const responses = await Promise.all(calls);
+        // Assuming you already have the `calls` array populated with axios requests
 
         let extractedData = [];
+        let appliedFilters = [];
         let authorData = {};
         let subjectData = {};
         let itemTypeData = {};
         let publisherData = {};
-        let pageDetails = null;
+        let pageDetails = {};
 
         let jgateSubjectData = {};
-        let jgatePublisherData = {};
         let jgateAuthorData = {};
 
         let kohaAuthorData = {};
@@ -511,316 +450,346 @@ exports.getData = async (req, res) => {
         let jgateJournalData = {};
         let jgateYearFromData = {};
         let jgateDataTypeData = {};
+        let jgatePublisherData = {};
         const databaseCounts = [];
+        Promise.all(calls.map(call => call.request))
+            .then((responses) => {
+                // Loop through the responses
+                responses.forEach((response, index) => {
+                    const label = calls[index].label;
+                    if (label === 'DSpace') {
+
+                        const dspaceResponse = response; // Get the first response
+                        const resource = logos.find(resource => resource.label === "dspace");
+
+                        let resourceLogo = null
+                        if (resource) resourceLogo = resource.logo
+                        const dspaceExtractedData = dspaceResponse.data._embedded.searchResult._embedded.objects.map(obj => {
+                            const metadata = obj._embedded.indexableObject.metadata;
+                            const _links = obj._embedded.indexableObject._links;
+                            let thumbnail = obj._embedded?.indexableObject?._embedded?.thumbnail?._links?.content?.href;
+                            if (!thumbnail) thumbnail = null
+
+                            const getFieldValue = (field) => {
+                                return metadata[field] ? metadata[field].map(fieldObj => fieldObj.value).join('; ') : 'N/A';
+                            };
+
+                            return {
+                                imageUrl: thumbnail,
+                                links: _links,
+                                database: "dspace",
+                                resourceLogo,
+                                id: obj._embedded.indexableObject.id,
+                                title: getFieldValue('dc.title'),
+                                dtype: getFieldValue('dc.type'),
+                                author: getFieldValue('dc.contributor.author'),
+                                date: getFieldValue('dc.date.issued'),
+                                subject: getFieldValue('dc.subject'),           // Example for subjects
+                                identifier: getFieldValue('dc.identifier'),     // Example for identifiers
+                                description: getFieldValue('dc.description.abstract'),  // Example for descriptions
+                                publisher: getFieldValue('dc.publisher')    // Example for descriptions
+                            };
+                        });
+
+                        const dspaceFilters = dspaceResponse.data.appliedFilters
+                        const dspaceAuthorData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "author");
+                        const dspaceSubjectData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "subject");
+                        const dspacePublisherData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "publisher");
+                        const dspaceItemTypeData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "itemtype");
+                        const dspacePageDetails = dspaceResponse.data._embedded.searchResult.page;
+                        extractedData = [...extractedData, ...dspaceExtractedData];
+                        if (dspaceFilters) {
+                            appliedFilters = [...appliedFilters, ...dspaceFilters];
+                        }
+                        if (dspacePageDetails) {
+                            databaseCounts.push({ name: "DSpace", count: dspacePageDetails.totalElements })
+
+                        }
+
+                        authorData = { ...authorData, ...dspaceAuthorData }
+                        subjectData = { ...subjectData, ...dspaceSubjectData }
+
+                        itemTypeData = { ...itemTypeData, ...dspaceItemTypeData }
+
+                        publisherData = { ...publisherData, ...dspacePublisherData }
+
+
+                        pageDetails = { ...pageDetails, ...dspacePageDetails }
+                        // Handle DSpace response
+                        console.log(`DSpace Response ${index + 1}:`, response.data);
+                        // Process DSpace-specific response logic here
+                    }
+                    if (label === 'J-Gate') {
+
+                        const jgateResponse = response; // Get the second response
+                        const totalPages = jgateResponse.data.data.docs_total_pages
+                        const resource = logos.find(resource => resource.label === "j-gate");
+                        let resourceLogo = null
+                        if (resource) resourceLogo = resource.logo
+                        const subjects = jgateResponse.data.data.jsonfacets?.subjects_name_l3?.buckets
+                        const publisher = jgateResponse.data.data.jsonfacets?.publisher_name?.buckets
+                        const journal = jgateResponse.data.data.jsonfacets?.journal_name?.buckets
+                        const dataType = jgateResponse.data.data.jsonfacets?.data_type?.buckets
+                        const yearFrom = jgateResponse.data.data.jsonfacets?.yearfrom?.buckets
+                        const authors = jgateResponse.data.data.jsonfacets?.authors_tk?.buckets
+                        if (authors && Array.isArray(authors)) {
+                            let values = authors.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgateAuthorData['name'] = 'authors';
+                            jgateAuthorData['type'] = "j-gate";
+                            jgateAuthorData['page'] = null;
+                            jgateAuthorData['_links'] = null;
+                            jgateAuthorData['_embedded'] = {};
+                            jgateAuthorData['_embedded']['values'] = values;
+                        }
+                        if (subjects && Array.isArray(subjects)) {
+                            let values = subjects.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgateSubjectData['name'] = 'subject';
+                            jgateSubjectData['type'] = "j-gate";
+                            jgateSubjectData['page'] = null;
+                            jgateSubjectData['_links'] = null;
+                            jgateSubjectData['_embedded'] = {}; // Initialize _embedded as an object
+                            jgateSubjectData['_embedded']['values'] = values; // Assign values to _embedded['values']
+                        }
+                        if (publisher && Array.isArray(publisher)) {
+                            let values = publisher.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgatePublisherData['name'] = 'publisher';
+                            jgatePublisherData['type'] = "j-gate";
+                            jgatePublisherData['page'] = null;
+                            jgatePublisherData['_links'] = null;
+                            jgatePublisherData['_embedded'] = {}; // Initialize _embedded as an object
+                            jgatePublisherData['_embedded']['values'] = values; // Assign values to _embedded['values']
+                        }
+                        if (dataType && Array.isArray(dataType)) {
+                            let values = dataType.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgateDataTypeData['name'] = 'data Type';
+                            jgateDataTypeData['type'] = "j-gate";
+                            jgateDataTypeData['page'] = null;
+                            jgateDataTypeData['_links'] = null;
+                            jgateDataTypeData['_embedded'] = {}; // Initialize _embedded as an object
+                            jgateDataTypeData['_embedded']['values'] = values; // Assign values to _embedded['values']
+                        }
+                        if (journal && Array.isArray(journal)) {
+                            let values = journal.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgateJournalData['name'] = 'journal';
+                            jgateJournalData['type'] = "j-gate";
+                            jgateJournalData['page'] = null;
+                            jgateJournalData['_links'] = null;
+                            jgateJournalData['_embedded'] = {}; // Initialize _embedded as an object
+                            jgateJournalData['_embedded']['values'] = values; // Assign values to _embedded['values']
+                        }
+                        if (yearFrom && Array.isArray(yearFrom)) {
+                            let values = yearFrom.map(item => ({
+                                label: item.val,
+                                count: item.count.toString(),
+                                _links: {} // You can populate _links with relevant data if needed
+                            }));
+
+                            jgateYearFromData['name'] = 'yearFrom';
+                            jgateYearFromData['type'] = "j-gate";
+                            jgateYearFromData['page'] = null;
+                            jgateYearFromData['_links'] = null;
+                            jgateYearFromData['_embedded'] = {}; // Initialize _embedded as an object
+                            jgateYearFromData['_embedded']['values'] = values; // Assign values to _embedded['values']
+                        }
+
+                        if (totalPages) {
+                            databaseCounts.push({ name: "J-Gate", count: totalPages * 10 })
+                            if (pageDetails && pageDetails.totalElements) {
+                                pageDetails.totalElements += totalPages * 10;
+                            }
+                        }
+                        let externalLink;
+
+
+                        const jgateExtractedData = jgateResponse.data.data.docs.map(item => {
+                            const metadata = item;
+                            const _links = {};
+                            let thumbnail = null;
+
+                            if (!thumbnail) thumbnail = null
+                            const getFieldValue = (field) => {
+                                return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
+                            };
+                            if (item.article_id) {
+                                externalLink = `https://jgatenext.com/abstractFullScreen?id=${item.article_id}`
+
+                            }
+                            return {
+                                externalLink,
+                                imageUrl: thumbnail,
+                                links: _links,
+                                id: item.id,
+                                resourceLogo,
+                                title: item.title,
+                                database: "j-gate",
+                                author: getFieldValue('authors'),
+                                dtype: item.data_type,
+                                date: item.yearfrom,
+                                subject: item.subject,
+                                identifier: item.identifier,
+                                description: item.abstract,
+                                publisher: getFieldValue('publisher_name'),
+                                imageUrl: item.imageUrl
+                            };
+                        });
+
+                        extractedData = [...extractedData, ...jgateExtractedData];
+                        // Handle Koha response
+                        console.log(`Koha Response ${index + 1}:`, response.data);
+                        // Process Koha-specific response logic here
+                    }
+                    if (label === 'Koha') {
+
+                        const kohaResponse = response; // Get the second response
+
+                        const resource = logos.find(resource => resource.label === "koha");
+                        let resourceLogo = null
+                        if (resource) resourceLogo = resource.logo
+
+                        if (kohaResponse.data[0] !== "No results found") {
+                            const totalPages = kohaResponse.data.total
+
+
+                            if (totalPages) {
+                                databaseCounts.push({ name: "Koha", count: totalPages })
+                                if (pageDetails && pageDetails.totalElements) {
+                                    pageDetails.totalElements += totalPages;
+                                }
+                            }
+                            const facets = kohaResponse.data.facet
+                            // console.log(`Facet got ${facets.length}`)
+                            const authorsObject = facets.find(facet => facet.label === "Authors");
+                            const iTypesObject = facets.find(facet => facet.label === "Item types");
+                            const topicsObject = facets.find(facet => facet.label === "Topics");
+                            if (authorsObject && Array.isArray(authorsObject.facets)) {
+                                const authors = authorsObject.facets
+                                let values = authors.map(item => ({
+                                    label: item.facet_title_value,
+                                    count: item.facet_count.toString(),
+                                    _links: {} // You can populate _links with relevant data if needed
+                                }));
+
+                                kohaAuthorData['name'] = 'authors';
+                                kohaAuthorData['type'] = "koha";
+                                kohaAuthorData['page'] = null;
+                                kohaAuthorData['_links'] = null;
+                                kohaAuthorData['_embedded'] = {};
+                                kohaAuthorData['_embedded']['values'] = values;
+                            }
+                            if (iTypesObject && Array.isArray(iTypesObject.facets)) {
+                                const itemsObj = iTypesObject.facets
+                                let values = itemsObj.map(item => ({
+                                    label: item.facet_label_value,
+                                    count: item.facet_count.toString(),
+                                    _links: {} // You can populate _links with relevant data if needed
+                                }));
+
+                                kohaITypeData['name'] = 'data Type';
+                                kohaITypeData['type'] = "koha";
+                                kohaITypeData['page'] = null;
+                                kohaITypeData['_links'] = null;
+                                kohaITypeData['_embedded'] = {};
+                                kohaITypeData['_embedded']['values'] = values;
+                            }
+                            if (topicsObject && Array.isArray(topicsObject.facets)) {
+                                const itemsObj = topicsObject.facets
+                                let values = itemsObj.map(item => ({
+                                    label: item.facet_title_value,
+                                    count: item.facet_count.toString(),
+                                    _links: {} // You can populate _links with relevant data if needed
+                                }));
+
+                                kohaTopicsData['name'] = 'topics';
+                                kohaTopicsData['type'] = "koha";
+                                kohaTopicsData['page'] = null;
+                                kohaTopicsData['_links'] = null;
+                                kohaTopicsData['_embedded'] = {};
+                                kohaTopicsData['_embedded']['values'] = values;
+                            }
+                            console.log(`Koha topics ${JSON.stringify(kohaTopicsData)}`)
+                            const kohaExtractedData = kohaResponse.data.results.map(item => {
+                                const metadata = item;
+                                const _links = {};
+                                let thumbnail = null;
+
+                                if (!thumbnail) thumbnail = null
+                                const getFieldValue = (field) => {
+                                    return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
+                                };
+
+                                return {
+                                    imageUrl: thumbnail,
+                                    links: _links,
+                                    id: item.id,
+                                    title: item.title,
+                                    database: "koha",
+                                    resourceLogo,
+                                    author: item.author,
+                                    dtype: item.description,
+                                    date: item.copyrightdate,
+                                    subject: "",
+                                    identifier: "",
+                                    description: item.abstract,
+                                    publisher: item.publishercode,
+
+                                };
+                            });
+
+                            extractedData = [...extractedData, ...kohaExtractedData];
+                        }
+                        // Handle Koha response
+                        console.log(`Koha Response ${index + 1}:`, response.data);
+                        // Process Koha-specific response logic here
+                    }
+
+                    // You can add other conditional checks for different sources if needed
+                });
+            })
+            .catch((error) => {
+                console.error('Error occurred during API requests:', error);
+            });
+
+
 
         if (labels.includes('DSpace')) {
-            const dspaceResponse = responses.shift(); // Get the first response
-            const resource = logos.find(resource => resource.label === "dspace");
 
-            let resourceLogo = null
-            if (resource) resourceLogo = resource.logo
-            const dspaceExtractedData = dspaceResponse.data._embedded.searchResult._embedded.objects.map(obj => {
-                const metadata = obj._embedded.indexableObject.metadata;
-                const _links = obj._embedded.indexableObject._links;
-                let thumbnail = obj._embedded?.indexableObject?._embedded?.thumbnail?._links?.content?.href;
-                if (!thumbnail) thumbnail = null
+        }
 
-                const getFieldValue = (field) => {
-                    return metadata[field] ? metadata[field].map(fieldObj => fieldObj.value).join('; ') : 'N/A';
-                };
+        if (labels.includes('Koha')) {
 
-                return {
-                    imageUrl: thumbnail,
-                    links: _links,
-                    database: "dspace",
-                    resourceLogo,
-                    id: obj._embedded.indexableObject.id,
-                    title: getFieldValue('dc.title'),
-                    dtype: getFieldValue('dc.type'),
-                    author: getFieldValue('dc.contributor.author'),
-                    date: getFieldValue('dc.date.issued'),
-                    subject: getFieldValue('dc.subject'),           // Example for subjects
-                    identifier: getFieldValue('dc.identifier'),     // Example for identifiers
-                    description: getFieldValue('dc.description.abstract'),  // Example for descriptions
-                    publisher: getFieldValue('dc.publisher')    // Example for descriptions
-                };
-            });
-
-            const dspaceFilters = dspaceResponse.data.appliedFilters
-            const dspaceAuthorData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "author");
-            const dspaceSubjectData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "subject");
-            const dspacePublisherData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "publisher");
-            const dspaceItemTypeData = dspaceResponse.data._embedded.facets.find(obj => obj.name === "itemtype");
-            const dspacePageDetails = dspaceResponse.data._embedded.searchResult.page;
-            extractedData = [...extractedData, ...dspaceExtractedData];
-            // if (dspaceFilters) {
-            //     appliedFilters = [...appliedFilters, ...dspaceFilters];
-            // }
-            console.log(`Author ${JSON.stringify(appliedFilters)}`)
-            if (dspacePageDetails && dspacePageDetails.totalElements > 0) {
-                databaseCounts.push({ name: "DSpace", count: dspacePageDetails.totalElements })
-
-            }
-
-            authorData = dspaceAuthorData
-            subjectData = dspaceSubjectData
-            itemTypeData = dspaceItemTypeData
-            publisherData = dspacePublisherData
-
-            pageDetails = dspacePageDetails
+            // Assuming jgateResponse contains similar structure for authorData and subjectData
+            // Add logic to extract authorData and subjectData from jgateResponse if available
         }
         if (labels.includes('J-Gate')) {
-            const jgateResponse = responses.shift(); // Get the second response
-            const totalPages = jgateResponse.data.data.docs_total_pages
-            const resource = logos.find(resource => resource.label === "j-gate");
-            let resourceLogo = null
-            if (resource) resourceLogo = resource.logo
-            const subjects = jgateResponse.data.data.jsonfacets?.subjects_name_l3?.buckets
-            const publisher = jgateResponse.data.data.jsonfacets?.publisher_name?.buckets
-            const journal = jgateResponse.data.data.jsonfacets?.journal_name?.buckets
-            const dataType = jgateResponse.data.data.jsonfacets?.data_type?.buckets
-            const yearFrom = jgateResponse.data.data.jsonfacets?.yearfrom?.buckets
-            const authors = jgateResponse.data.data.jsonfacets?.authors_tk?.buckets
-            const hits = jgateResponse.data.data.hits
-            if (authors && Array.isArray(authors)) {
-                let values = authors.map(item => ({
-                    label: item.val,
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
 
-                jgateAuthorData['name'] = 'authors';
-                jgateAuthorData['type'] = "j-gate";
-                jgateAuthorData['page'] = null;
-                jgateAuthorData['_links'] = null;
-                jgateAuthorData['_embedded'] = {};
-                jgateAuthorData['_embedded']['values'] = values;
-            }
-            if (subjects && Array.isArray(subjects)) {
-                let values = subjects.map(item => ({
-                    label: item.val,
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
-
-                jgateSubjectData['name'] = 'subject';
-                jgateSubjectData['type'] = "j-gate";
-                jgateSubjectData['page'] = null;
-                jgateSubjectData['_links'] = null;
-                jgateSubjectData['_embedded'] = {}; // Initialize _embedded as an object
-                jgateSubjectData['_embedded']['values'] = values; // Assign values to _embedded['values']
-            }
-            if (publisher && Array.isArray(publisher)) {
-                let values = publisher.map(item => ({
-                    label: item.val,
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
-
-                jgatePublisherData['name'] = 'publisher';
-                jgatePublisherData['type'] = "j-gate";
-                jgatePublisherData['page'] = null;
-                jgatePublisherData['_links'] = null;
-                jgatePublisherData['_embedded'] = {}; // Initialize _embedded as an object
-                jgatePublisherData['_embedded']['values'] = values; // Assign values to _embedded['values']
-            }
-            if (dataType && Array.isArray(dataType)) {
-                let values = dataType.map(item => ({
-                    label: item.val,
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
-
-                jgateDataTypeData['name'] = 'data Type';
-                jgateDataTypeData['type'] = "j-gate";
-                jgateDataTypeData['page'] = null;
-                jgateDataTypeData['_links'] = null;
-                jgateDataTypeData['_embedded'] = {}; // Initialize _embedded as an object
-                jgateDataTypeData['_embedded']['values'] = values; // Assign values to _embedded['values']
-            }
-            if (journal && Array.isArray(journal)) {
-                let values = journal.map(item => ({
-                    label: item.val,
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
-
-                jgateJournalData['name'] = 'journals';
-                jgateJournalData['type'] = "j-gate";
-                jgateJournalData['page'] = null;
-                jgateJournalData['_links'] = null;
-                jgateJournalData['_embedded'] = {}; // Initialize _embedded as an object
-                jgateJournalData['_embedded']['values'] = values; // Assign values to _embedded['values']
-            }
-            if (yearFrom && Array.isArray(yearFrom)) {
-                let values = yearFrom.map(item => ({
-                    label: item.val.toString(),
-                    count: item.count.toString(),
-                    _links: {} // You can populate _links with relevant data if needed
-                }));
-
-                jgateYearFromData['name'] = 'yearFrom';
-                jgateYearFromData['type'] = "j-gate";
-                jgateYearFromData['page'] = null;
-                jgateYearFromData['_links'] = null;
-                jgateYearFromData['_embedded'] = {}; // Initialize _embedded as an object
-                jgateYearFromData['_embedded']['values'] = values; // Assign values to _embedded['values']
-            }
-
-            if (totalPages) {
-                databaseCounts.push({ name: "J-Gate", count: hits })
-                // if (pageDetails && pageDetails.totalElements) {
-                //     pageDetails.totalElements += totalPages * 10;
-                // }
-            }
-            let externalLink;
-            if (pageDetails) {
-                pageDetails.totalPages += totalPages
-                pageDetails.totalElements += hits
-
-            } else {
-                pageDetails = { number: page, size: 10, totalPages, totalElements: hits }
-
-            }
-
-            const jgateExtractedData = jgateResponse.data.data.docs.map(item => {
-                const metadata = item;
-                const _links = {};
-                let thumbnail = null;
-
-                if (!thumbnail) thumbnail = null
-                const getFieldValue = (field) => {
-                    return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
-                };
-                if (item.article_id) {
-                    externalLink = `https://jgatenext.com/abstractFullScreen?id=${item.article_id}`
-
-                }
-                return {
-                    externalLink,
-                    imageUrl: thumbnail,
-                    links: _links,
-                    id: item.id,
-                    resourceLogo,
-                    title: item.title,
-                    database: "j-gate",
-                    author: getFieldValue('authors'),
-                    dtype: item.data_type,
-                    date: item.yearfrom,
-                    subject: item.subject,
-                    identifier: item.identifier,
-                    description: item.abstract,
-                    publisher: getFieldValue('publisher_name'),
-                    imageUrl: item.imageUrl
-                };
-            });
-
-            extractedData = [...extractedData, ...jgateExtractedData];
             // Assuming jgateResponse contains similar structure for authorData and subjectData
             // Add logic to extract authorData and subjectData from jgateResponse if available
         }
-        if (labels.includes('Koha')) {
-            const kohaResponse = responses.shift(); // Get the second response
-
-            const resource = logos.find(resource => resource.label === "koha");
-            let resourceLogo = null
-            if (resource) resourceLogo = resource.logo
-
-            if (kohaResponse.data[0] !== "No results found") {
-                const totalPages = kohaResponse.data.total
-
-
-                if (totalPages) {
-                    databaseCounts.push({ name: "Koha", count: totalPages })
-                    if (pageDetails && pageDetails.totalElements) {
-                        pageDetails.totalElements += totalPages;
-                    }
-                }
-                const facets = kohaResponse.data.facet
-                // console.log(`Facet got ${facets.length}`)
-                const authorsObject = facets.find(facet => facet.label === "Authors");
-                const iTypesObject = facets.find(facet => facet.label === "Item types");
-                const topicsObject = facets.find(facet => facet.label === "Topics");
-                if (authorsObject && Array.isArray(authorsObject.facets)) {
-                    const authors = authorsObject.facets
-                    let values = authors.map(item => ({
-                        label: item.facet_title_value,
-                        count: item.facet_count.toString(),
-                        _links: {} // You can populate _links with relevant data if needed
-                    }));
-
-                    kohaAuthorData['name'] = 'authors';
-                    kohaAuthorData['type'] = "koha";
-                    kohaAuthorData['page'] = null;
-                    kohaAuthorData['_links'] = null;
-                    kohaAuthorData['_embedded'] = {};
-                    kohaAuthorData['_embedded']['values'] = values;
-                }
-                if (iTypesObject && Array.isArray(iTypesObject.facets)) {
-                    const itemsObj = iTypesObject.facets
-                    let values = itemsObj.map(item => ({
-                        label: item.facet_label_value,
-                        count: item.facet_count.toString(),
-                        _links: {} // You can populate _links with relevant data if needed
-                    }));
-
-                    kohaITypeData['name'] = 'data Type';
-                    kohaITypeData['type'] = "koha";
-                    kohaITypeData['page'] = null;
-                    kohaITypeData['_links'] = null;
-                    kohaITypeData['_embedded'] = {};
-                    kohaITypeData['_embedded']['values'] = values;
-                }
-                if (topicsObject && Array.isArray(topicsObject.facets)) {
-                    const itemsObj = topicsObject.facets
-                    let values = itemsObj.map(item => ({
-                        label: item.facet_title_value,
-                        count: item.facet_count.toString(),
-                        _links: {} // You can populate _links with relevant data if needed
-                    }));
-
-                    kohaTopicsData['name'] = 'topics';
-                    kohaTopicsData['type'] = "koha";
-                    kohaTopicsData['page'] = null;
-                    kohaTopicsData['_links'] = null;
-                    kohaTopicsData['_embedded'] = {};
-                    kohaTopicsData['_embedded']['values'] = values;
-                }
-                //     console.log(`Koha topics ${JSON.stringify(kohaTopicsData)}`)
-                const kohaExtractedData = kohaResponse.data.results.map(item => {
-                    const metadata = item;
-                    const _links = {};
-                    let thumbnail = null;
-
-                    if (!thumbnail) thumbnail = null
-                    const getFieldValue = (field) => {
-                        return metadata[field] ? metadata[field].map(fieldObj => fieldObj).join('; ') : 'N/A';
-                    };
-
-                    return {
-                        imageUrl: thumbnail,
-                        links: _links,
-                        id: item.id,
-                        title: item.title,
-                        database: "koha",
-                        resourceLogo,
-                        author: item.author,
-                        dtype: item.description,
-                        date: item.copyrightdate,
-                        subject: "",
-                        identifier: "",
-                        description: item.abstract,
-                        publisher: item.publishercode,
-
-                    };
-                });
-
-                extractedData = [...extractedData, ...kohaExtractedData];
-            }
-            // Assuming jgateResponse contains similar structure for authorData and subjectData
-            // Add logic to extract authorData and subjectData from jgateResponse if available
-        }
-
 
         // Check if both values arrays are not null
         const subjectValues = subjectData._embedded?.values || [];
@@ -895,7 +864,7 @@ exports.getData = async (req, res) => {
             itemTypeData: mergedItemTypeObject,
             dataType: jgateDataTypeData,
             yearFrom: jgateYearFromData,
-            journals: jgateJournalData,
+            journal: jgateJournalData,
             appliedFilters,
             databaseCounts
         });
@@ -957,17 +926,14 @@ exports.getBrowseData = async (req, res) => {
             const result = dbLinks.find(item => item.label === "J-Gate");
             const value = result ? result.value : null;
             const jgateUrl = `${value}${startsWith}&page=${page}&rows=10&search_mode=startswith`;
-            //  console.log("jgateUrl" + jgateUrl)
-            const headers = result ? result.searchHeader : null
-            const paramName = headers.paramName
-            const keyValue = headers.keyValue
+            console.log("jgateUrl" + jgateUrl)
+
             const jgateConfig = {
                 method: 'get',
                 maxBodyLength: Infinity,
                 url: jgateUrl,
                 headers: {
-                    [paramName]: keyValue // Add any required headers here
-
+                    'Api-Key': 'e54d44315dab474eb71a0db1fcb9e659' // Add any required headers here
                 },
 
             };
@@ -1033,7 +999,7 @@ exports.getBrowseData = async (req, res) => {
 
             pageDetails = dspacePageDetails
 
-            // console.log(JSON.stringify(dspacePageDetails))
+            console.log(JSON.stringify(dspacePageDetails))
         }
         if (labels.includes('Koha') && startsWith !== "%23") {
             const kohaResponse = responses.shift(); // Get the second response
@@ -1055,7 +1021,7 @@ exports.getBrowseData = async (req, res) => {
                     }
 
                 }
-                //   console.log(JSON.stringify(kohaResponse.data.results))
+                console.log(JSON.stringify(kohaResponse.data.results))
                 const kohaExtractedData = kohaResponse.data.results.map(item => {
                     const metadata = item;
                     const _links = {};

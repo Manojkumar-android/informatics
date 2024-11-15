@@ -1,12 +1,13 @@
 //components//
 import React, { useState, useContext } from 'react';
-import BrowseContext from '../../contexts/browseContext';
+import BrowseContext from '../../contexts/browse/browseContext';
 const Alphabet = () => {
     const { selectedLetter, setPageDetails, setSelectedLetter } = useContext(BrowseContext)
 
     const [isGridView, setIsGridView] = useState(false);
 
-    const alphabets = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const alphabets = ['All', '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+
 
     const onAlphaChange = e => {
 

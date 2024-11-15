@@ -1,10 +1,10 @@
 
 import React, { createContext, useState } from 'react';
 
-const SubjectContext = createContext();
+const BrowseSubjectContext = createContext();
 
 
-export const SubjectContextProvider = ({ children }) => {
+export const BrowseSubjectContextProvider = ({ children }) => {
     const [subject, setSubject] = useState({})
     const handleSubjectResponse = (res) => {
         if (!res.subjectData || !res.subjectData._embedded || !res.subjectData._embedded.values) {
@@ -65,7 +65,7 @@ export const SubjectContextProvider = ({ children }) => {
         }));
     };
     return (
-        <SubjectContext.Provider
+        <BrowseSubjectContext.Provider
             value={{
                 subject,
                 setSubject,
@@ -75,8 +75,8 @@ export const SubjectContextProvider = ({ children }) => {
             }}
         >
             {children}
-        </SubjectContext.Provider>
+        </BrowseSubjectContext.Provider>
     );
 }
 
-export default SubjectContext;
+export default BrowseSubjectContext;

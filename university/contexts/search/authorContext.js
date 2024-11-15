@@ -13,11 +13,29 @@ export const AuthorContextProvider = ({ children }) => {
             label: "Author",
             page: null,
             links: null,
+            searchTerm: null,
+            searchItems: [],
             values: [],
 
 
         }));
     };
+    const handleAuthorSearchResponse = (res) => {
+        if (!res.authorData || !res.authorData._embedded || !res.authorData._embedded.values) {
+            console.warn('Invalid authorData:', res.authorData);
+            return;
+        }
+        let { _embedded } = res.authorData;
+        //  
+        const updatedValues = _embedded.values.map(item => `${item.label}(${item.count})`);
+        setAuthorData(prevState => ({
+            ...prevState,
+            searchItems: updatedValues,
+
+
+        }));
+
+    }
     const handleAuthorResponse = (res) => {
         if (!res.authorData || !res.authorData._embedded || !res.authorData._embedded.values) {
             console.warn('Invalid authorData:', res.authorData);
@@ -29,7 +47,6 @@ export const AuthorContextProvider = ({ children }) => {
         if (res.appliedFilters) {
             authorFilters = res.appliedFilters.filter(filter => filter.filter === 'author');
         }
-        //  alert(JSON.stringify(authorFilters))
         const updatedValues = _embedded.values.map(item => ({
             ...item,
             checked: authorFilters.some(filter => filter.label === item.label) // Check if the label matches
@@ -44,6 +61,7 @@ export const AuthorContextProvider = ({ children }) => {
 
 
         }));
+        console.log(JSON.stringify(updatedValues))
 
         //alert(JSON.stringify(author))
     }
@@ -57,7 +75,14 @@ export const AuthorContextProvider = ({ children }) => {
     };
     return (
         <AuthorContext.Provider
-            value={{ author, setAuthorData, handleAuthorResponse, clearAuthorValues, getCheckedAuthor }}
+            value={{
+                author,
+                setAuthorData,
+                handleAuthorResponse,
+                clearAuthorValues,
+                getCheckedAuthor,
+                handleAuthorSearchResponse
+            }}
         >
             {children}
         </AuthorContext.Provider>

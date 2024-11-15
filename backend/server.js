@@ -13,6 +13,7 @@ const app = express();
 const allowedOrigins = [
     process.env.ADMIN_URL,
     process.env.UNIVERSITY_URL,
+    process.env.UNIVERSITY_URL2,
 
 ];
 

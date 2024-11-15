@@ -7,7 +7,7 @@ import ErrorBoundary from '../errorBoundary';
 
 const Search = () => {
     const [selectedButton, setSelectedButton] = useState(null);
-    const { term, setTerm, search, landing, setLanding } = useContext(SearchContext);
+    const { term, setTerm, search, loading, landing, setLanding, data } = useContext(SearchContext);
     const searchClick = async (e) => {
 
         if (term == "") return;
@@ -33,7 +33,6 @@ const Search = () => {
 
     return (
         landing == 0 ? <div className="flex flex-col min-h-screen">
-            {/* <TopBar /> */}
             <div className="flex flex-grow bg-white p-0">
                 <main className="flex-grow p-0 flex flex-col items-end relative">
                     <img
@@ -111,19 +110,28 @@ const Search = () => {
             </div>
 
         </div>
-            : <>
+            : <div className="my-3 bg-gray-100">
                 <SecondTopBar />
                 <div className="flex flex-grow">
                     <aside className="w-1/4 bg-gray-100">
                         <Sidebar />
                     </aside>
                     <main className="w-3/4 px-4 bg-gray-100">
-                        <ErrorBoundary>
-                            <List />
-                        </ErrorBoundary>
+
+
+                        {(data.length == 0 && !loading) ? (
+
+                            <h1> Search results not found </h1>
+                        )
+                            :
+                            <ErrorBoundary>
+                                <List />
+                            </ErrorBoundary>
+                        }
+
                     </main>
                 </div>
-            </>
+            </div>
 
     );
 }

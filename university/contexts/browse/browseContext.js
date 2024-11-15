@@ -6,13 +6,16 @@ import {
 } from "react";
 const BrowseContext = createContext();
 import { dSpaceBrowse }
-    from "../actions/browseAction";
-import DatabaseContext from "../contexts/search/databaseContext";
+    from "../../actions/browseAction";
+import DatabaseContext from "../search/databaseContext";
+import { useRouter } from 'next/router';
 
 export const BrowseContextProvider = ({ children }) => {
-    const [selectedLetter, setSelectedLetter] = useState('#');
+    const router = useRouter();
+    const currentPath = router.pathname;
+    const [selectedLetter, setSelectedLetter] = useState('All');
     const [pageDetails, setPageDetails] = useState({
-        number: 1, size: 0, totalPages: 0, totalElements: 0, pageCounter: 0
+        number: 0, size: 0, totalPages: 0, totalElements: 0, pageCounter: 0
 
     })
     const { database, setDatabase, resources, logos, handleDatabaseCount } = useContext(DatabaseContext);
@@ -22,11 +25,11 @@ export const BrowseContextProvider = ({ children }) => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        if (resources.length == 0) return;
-        browse(null, 'browse')
-    }, [number, selectedLetter, resources]);
+        if (resources.length == 0 || currentPath != "/browse") return;
+        browse(null, 'browse', 0)
+    }, [selectedLetter, resources, currentPath]);
 
-    const browse = (filter, type) => {
+    const browse = (filter, type, pageNumber) => {
         setLoading(true);
         let data = database
         if (type == "database") {
@@ -34,8 +37,12 @@ export const BrowseContextProvider = ({ children }) => {
             //  alert(JSON.stringify(data))
 
         }
+        let page1 = pageNumber ?? 1
+        let page = page1 - 1
+        const dbLinks = getDbValues(data)
+
         const db = getCheckedValues(data)
-        const body = { startsWith: selectedLetter, page: number, database: db, logos }
+        const body = { startsWith: selectedLetter, page: page, dbLinks, database: db, logos }
         dSpaceBrowse(body).then(res => {
 
             if (res.error) {
@@ -64,6 +71,19 @@ export const BrowseContextProvider = ({ children }) => {
 
         return checkedValues;
     };
+    const getDbValues = (database) => {
+        if (!database) return [];
+
+        const checkedValues = database.values
+            .filter(item => item.checked) // Filter items that are checked
+            .map(item => ({
+                label: item.type,
+                value: item.browseApiLink,
+                searchHeader: item.searchHeader
+            }));
+
+        return checkedValues;
+    };
     const handleSearchResponse = (response) => {
         let { number, size, totalPages, totalElements, } = response.pageDetails;
         // console.table(pagingCounter);
@@ -71,6 +91,8 @@ export const BrowseContextProvider = ({ children }) => {
         // If number is 0, set it to 1
         if (number == 0) {
             number = 1;
+        } else {
+            number += 1
         }
         setPageDetails(prevState => ({
             ...prevState,

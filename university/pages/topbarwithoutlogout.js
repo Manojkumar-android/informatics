@@ -3,6 +3,8 @@ import Link from 'next/link';
 import LoginPopup from './login';
 import ResetPopup from './resetPassword';
 import UserContext from '../contexts/userContext';
+import SearchContext from '../contexts/search/searchContext';
+import DatabaseContext from '../contexts/search/databaseContext';
 import Router, { useRouter } from 'next/router';
 import { Menu } from 'primereact/menu';
 
@@ -11,6 +13,8 @@ const TopBarWithoutLogout = () => {
   const currentPath = router.pathname;
   const menuLeft = useRef(null);
   const { isLoginPopupOpen, setIsResetPopupOpen, isResetPopupOpen, handleLoginClick, closeResetPopup, closeLoginPopup, userSession, setUserSession, userName } = useContext(UserContext);
+  const { setLanding, setTerm } = useContext(SearchContext);
+  const { setSelected, selected } = useContext(DatabaseContext);
 
   const [showBellPopup, setShowBellPopup] = useState(false);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -57,11 +61,16 @@ const TopBarWithoutLogout = () => {
     { href: '/contact', label: 'Contact' }
   ];
 
-
+  const handleLogoClick = () => {
+    setLanding(0);
+    setTerm('');
+    setSelected("All")
+    router.push('/');
+  };
   return (
     <div className="relative bg-white text-black flex justify-between h-[100px] items-center p-4">
       {/* Left Logo */}
-      <div className="flex items-center">
+      <div className="flex items-center cursor-pointer" onClick={handleLogoClick} >
         <img src="/college logo.png" alt="Logo" className="h-[50px] w-[193.42px] mr-2" />
       </div>
 

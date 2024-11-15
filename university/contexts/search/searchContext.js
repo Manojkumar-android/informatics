@@ -5,7 +5,7 @@ import {
     useRef,
     useContext
 } from "react";
-import { getSearchData, getFacetsData, getKohaData }
+import { getSearchData, getFacetsData, getFacetsSearch, getKohaData }
     from "../../actions/searchAction";
 const SearchContext = createContext(); // Create a context object to share the state between Components
 import DatabaseContext from "../../contexts/search/databaseContext";
@@ -17,19 +17,21 @@ import ItemTypeContext from '../../contexts/search/itemTypeContext';
 import DataTypeContext from '../../contexts/search/dataTypeContext';
 import YearFromContext from '../../contexts/search/yearFromContext';
 import JournalContext from '../../contexts/search/journalContext';
+import TopicsContext from '../../contexts/search/topicContext';
 export const SearchContextProvider = ({ children }) => {
     const [term, setTerm] = useState('');
     const [call, setCall] = useState(true);
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const { database, setDatabase, handleDatabaseCount, logos } = useContext(DatabaseContext);
-    const { author, setAuthorData, handleAuthorResponse, clearAuthorValues, getCheckedAuthor } = useContext(AuthorContext);
+    const { handleAuthorSearchResponse, handleAuthorResponse, clearAuthorValues, getCheckedAuthor } = useContext(AuthorContext);
     const { pageDetails, setPageDetails } = useContext(PaginationContext);
-    const { subject, setSubject, handleSubjectResponse, clearSubjectValues } = useContext(SubjectContext);
-    const { handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
+    const { handleSubjectSearchResponse, handleSubjectResponse, clearSubjectValues } = useContext(SubjectContext);
+    const { handlePublisherSearchResponse, handlePublisherResponse, clearPublisherValues } = useContext(PublisherContext);
     const { handleDataTypeResponse, clearDataTypeValues } = useContext(DataTypeContext);
     const { handleYearFromResponse, clearYearFromValues } = useContext(YearFromContext);
-    const { handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
+    const { handleTopicsResponse, clearTopicsValues } = useContext(TopicsContext);
+    const { handleItemTypeSearchResponse, handleItemTypeResponse, clearItemTypeValues } = useContext(ItemTypeContext);
     const { handleJournalsResponse, clearJournalsValues } = useContext(JournalContext);
     const [landing, setLanding] = useState(0);
 
@@ -38,8 +40,9 @@ export const SearchContextProvider = ({ children }) => {
     useEffect(() => {
         if (!term && loading) return;
 
-        search(null, 'search')
-    }, [number]);
+
+        search(null, null)
+    }, []);
 
     const kohaSearch = () => {
         const body = { term, logos: logos, };
@@ -54,29 +57,29 @@ export const SearchContextProvider = ({ children }) => {
         })
 
     }
-    const search = (filter, type) => {
+    const search = (filter, type, isPageZero, dbChange, pageNumber) => {
+        if (!term) return;
         setLoading(true);
+
         let author = ''
         let subject = ''
         let publisher = ''
         let itemtype = ''
-        let page = number
-        let data = database
-        if (type == "author") {
-            author = filter
-            page = 1
-        } else if (type == "subject") {
-            subject = filter
-            page = 1
-        } else if (type == "publisher") {
-            publisher = filter
-            page = 1
-        } else if (type == "itemtype") {
-            itemtype = filter
-            page = 1
-        } else if (type == "database") {
-            data = filter
+        let page1 = pageNumber ?? 1
+        let page = page1 - 1
 
+        let data = database
+
+
+
+        if (type == "database") {
+            data = dbChange
+
+        } else if (type) {
+            page = 0
+        }
+        if (isPageZero) {
+            page = 0
         }
         clearAuthorValues()
         clearSubjectValues()
@@ -85,9 +88,10 @@ export const SearchContextProvider = ({ children }) => {
         clearYearFromValues()
         clearItemTypeValues()
         clearJournalsValues()
-        const db = getCheckedValues(data)
+        clearTopicsValues()
+        const dbLinks = getDbValues(data)
         // Create the body object with the existing properties
-        const body = { term, page: page, database: db, logos: logos, author: author, subject, publisher, itemtype };
+        const body = { term, page: page, dbLinks, logos: logos, author: author, subject, publisher, itemtype, filter };
 
         getSearchData(body).then(res => {
 
@@ -106,6 +110,7 @@ export const SearchContextProvider = ({ children }) => {
                 handleDataTypeResponse(res)
                 handleYearFromResponse(res)
                 handleJournalsResponse(res)
+                handleTopicsResponse(res)
 
                 setData(res.data)
 
@@ -122,9 +127,38 @@ export const SearchContextProvider = ({ children }) => {
         })
     }
 
+    const searchFacets = (prefix, type, filter) => {
+        // console.log("getFacets")
+        // console.log(type)
+        const body = { prefix, term, type, filter }
+        getFacetsSearch(body).then(res => {
+
+            if (res.error) {
+                console.log(res.error);
+
+            } else {
+                // console.log(JSON.stringify(res))
+
+                if (type == "Author") {
+                    handleAuthorSearchResponse(res)
+                } else if (type == "Subject") {
+                    handleSubjectSearchResponse(res)
+
+                } else if (type == "Publisher") {
+                    handlePublisherSearchResponse(res)
+
+                } else if (type == "Item Type") {
+                    handleItemTypeSearchResponse(res)
+
+                }
+
+            }
+        })
+    }
+
     const getFacets = (href, type) => {
-        console.log("getFacets")
-        console.log(type)
+        // console.log("getFacets")
+        // console.log(type)
         const body = { href, type }
         getFacetsData(body).then(res => {
 
@@ -163,6 +197,20 @@ export const SearchContextProvider = ({ children }) => {
 
         return checkedValues;
     };
+    const getDbValues = (database) => {
+        if (!database) return [];
+
+        const checkedValues = database.values
+            .filter(item => item.checked) // Filter items that are checked
+            .map(item => ({
+                label: item.type,
+                value: item.searchApiLink,
+                searchHeader: item.searchHeader
+            }));
+
+        return checkedValues;
+    };
+
     const getAllValues = () => {
 
         const allValues = database.values.map(item => item.value);
@@ -178,6 +226,8 @@ export const SearchContextProvider = ({ children }) => {
         // If number is 0, set it to 1
         if (number == 0) {
             number = 1;
+        } else {
+            number += 1
         }
 
         if (totalElements == 0) {
@@ -212,7 +262,8 @@ export const SearchContextProvider = ({ children }) => {
                 loading,
                 getFacets, getCheckedValues,
                 landing,
-                setLanding
+                setLanding,
+                searchFacets
 
             }}
         >

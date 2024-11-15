@@ -35,11 +35,28 @@ export const ItemTypeContextProvider = ({ children }) => {
 
 
     }
+    const handleItemTypeSearchResponse = (res) => {
+        if (!res.itemTypeData || !res.itemTypeData._embedded || !res.itemTypeData._embedded.values) {
+            console.log('Invalid itemTypeData:', res.itemTypeData);
+            return;
+        }
+        let { _embedded } = res.itemTypeData;
+        //  
+        const updatedValues = _embedded.values.map(item => `${item.label}(${item.count})`);
+        setItemType(prevState => ({
+            ...prevState,
+            searchItems: updatedValues,
+
+        }));
+
+    }
     const clearItemTypeValues = () => {
         setItemType(prevState => ({
             ...prevState,
             page: null,
             links: null,
+            searchTerm: null,
+            searchItems: [],
             values: [],
 
 
@@ -47,7 +64,13 @@ export const ItemTypeContextProvider = ({ children }) => {
     };
     return (
         <ItemTypeContext.Provider
-            value={{ itemType, setItemType, handleItemTypeResponse, clearItemTypeValues }}
+            value={{
+                itemType,
+                setItemType,
+                handleItemTypeResponse,
+                clearItemTypeValues,
+                handleItemTypeSearchResponse
+            }}
         >
             {children}
         </ItemTypeContext.Provider>
