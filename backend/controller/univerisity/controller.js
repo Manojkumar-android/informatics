@@ -1161,8 +1161,8 @@ exports.getResouceCategory = async (req, res) => {
             return res.status(400).json({ message: 'libraryId is required' });
         }
         const lib = "5ef2d116b414a5fcecdb4172"
-        const categoryUrl = `https://iras-api.informaticsglobal.com/resourceCategories?limit=50&library_id=${lib}`;
-        const resourceUrl = `https://api.informaticsglobal.com/resources?limit=50&library_id=${lib}`;
+        const categoryUrl = `https://iras-api.informaticsglobal.ai/resourceCategories?limit=50&library_id=${lib}`;
+        const resourceUrl = `https://api.informaticsglobal.ai/resources?limit=50&library_id=${lib}`;
 
         const [categoryResponse, resourceResponse] = await Promise.all([
             axios.get(categoryUrl),

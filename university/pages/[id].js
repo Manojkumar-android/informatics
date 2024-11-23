@@ -40,6 +40,7 @@ const Details = () => {
         setBookDetails(res.details);
       }
     });
+    alert(JSON.stringify(userSession))
   }, []);
 
   // Render loading state or error handling
@@ -49,14 +50,14 @@ const Details = () => {
   const handleClick = (e, link) => {
     if (!link) return;
     let externalLink = link
-    if (externalLink.includes("https://idr.informaticsglobal.com")) {
-      const newBaseUrl = "https://idr-informaticsglobal-com.irasdemo.informaticsglobal.com";
+    if (externalLink.includes("https://idr.informaticsglobal.ai")) {
+      const newBaseUrl = "https://idr-informaticsglobal-api.baiu.remotlog.com";
 
       externalLink = externalLink.replace("https://idr.informaticsglobal.com", newBaseUrl);
     }
 
     if (externalLink.includes("https://jgatenext.com")) {
-      const newBaseUrl = "https://jgatenext-com.irasdemo.informaticsglobal.com";
+      const newBaseUrl = "https://jgatenext-com.baiu.remotlog.com";
 
       externalLink = externalLink.replace("https://jgatenext.com", newBaseUrl);
     }
@@ -94,7 +95,7 @@ const Details = () => {
             </div>}  */}
             <div className='my-3'>
               <button
-                onClick={(e) => !userSession ? handleClick(e, bookDetails.externalLink) : setIsLoginPopupOpen(true)}
+                onClick={(e) => userSession ? handleClick(e, bookDetails.externalLink) : setIsLoginPopupOpen(true)}
                 className={`w-[200px] cursor-pointer border-0   text-[18px]   mt-6  py-3 ${userSession ? 'bg-secondary text-white' : 'bg-gray-200 text-black'} rounded-md  `}
 
               >
@@ -137,14 +138,7 @@ const Details = () => {
               <hr className="mt-2 border-t-1 border-gray-100 w-full" />
               <div className="text-subheader text-black line-clamp-3">{bookDetails.author}</div>
             </div>
-            {/* <div className='flex text-base mb-3 '>by   <div className="px-2 underline"> {bookDetails.author} </div>
-              , <div className="px-2 underline"> {bookDetails.publisher} {bookDetails.date}</div>
-            </div>
 
-            <div className="text-base text-black line-clamp-3">{bookDetails.description}</div>
-            <button className="bg-purple-800 text-white w-[360px] h-[48px] mt-6 px-4 py-2 rounded-lg" onClick={() => router.back()}>
-              Want to Read
-            </button> */}
           </div>
 
 

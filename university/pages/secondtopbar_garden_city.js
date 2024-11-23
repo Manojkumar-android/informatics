@@ -58,62 +58,71 @@ const SecondTopBar = () => {
       search(null, "database", null, updatedDatabase, 1)
 
     } else if (label == "OA") {
-      setDatabase((prevState) => ({
-        ...prevState,
-        values: prevState.values.map((option) =>
-          option.type === "DSpace"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      }));
-      let updatedDatabase = {
-        ...database,
-        values: database.values.map((option) =>
-          option.type === "DSpace"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      };
-      search(null, "database", null, updatedDatabase, 1)
+      const hasDspace = database.values.some((option) => option.type === "DSpace");
+      if (hasDspace) {
 
+        setDatabase((prevState) => ({
+          ...prevState,
+          values: prevState.values.map((option) =>
+            option.type === "DSpace"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        }));
+        let updatedDatabase = {
+          ...database,
+          values: database.values.map((option) =>
+            option.type === "DSpace"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        };
+        search(null, "database", null, updatedDatabase, 1)
+      }
     } else if (label == "Periodicals") {
-      setDatabase((prevState) => ({
-        ...prevState,
-        values: prevState.values.map((option) =>
-          option.type === "J-Gate"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      }));
-      let updatedDatabase = {
-        ...database,
-        values: database.values.map((option) =>
-          option.type === "J-Gate"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      };
-      search(null, "database", null, updatedDatabase, 1)
+      const hasJgate = database.values.some((option) => option.type === "J-Gate");
 
+      if (hasJgate) {
+        setDatabase((prevState) => ({
+          ...prevState,
+          values: prevState.values.map((option) =>
+            option.type === "J-Gate"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        }));
+        let updatedDatabase = {
+          ...database,
+          values: database.values.map((option) =>
+            option.type === "J-Gate"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        };
+        search(null, "database", null, updatedDatabase, 1)
+      }
     } else if (label == "Library Books") {
-      setDatabase((prevState) => ({
-        ...prevState,
-        values: prevState.values.map((option) =>
-          option.type === "Koha"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      }));
-      let updatedDatabase = {
-        ...database,
-        values: database.values.map((option) =>
-          option.type === "Koha"
-            ? { ...option, checked: true }
-            : { ...option, checked: false }
-        ),
-      };
-      search(null, "database", null, updatedDatabase, 1)
+      const hasKoha = database.values.some((option) => option.type === "Koha");
 
+      if (hasKoha) {
+        setDatabase((prevState) => ({
+          ...prevState,
+          values: prevState.values.map((option) =>
+            option.type === "Koha"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        }));
+        let updatedDatabase = {
+          ...database,
+          values: database.values.map((option) =>
+            option.type === "Koha"
+              ? { ...option, checked: true }
+              : { ...option, checked: false }
+          ),
+        };
+        search(null, "database", null, updatedDatabase, 1)
+      }
     }
 
     setSelected(label)
